@@ -44,25 +44,74 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+button:not(.epr-btn) {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  /* background-color: #000; */
   background-color: rgb(15, 20, 25);
   color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button:hover:not(.epr-btn) {
   background-color: rgb(39, 44, 48);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.sidebar {
+  margin-left: 200px;
+  padding-right: 60px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.sidebar-list {
+  margin-top: 15px;
+}
+
+.sidebar-list > li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.sidebar-list > li:hover {
+  background-color: aliceblue;
+} 
+
+.center-section {
+  border-left: 1px solid rgb(185, 202, 211);
+  border-right: 1px solid rgb(185, 202, 211);
+}
+
+.feed {
+  overflow-y: auto;
+}
+
+.right-bar {
+  overflow: hidden;
+  height: 100vh;
+  padding-left: 40px;
+  padding-top: 10px;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.suggestion-box {
+  width: 300px;
 }
 
 .divide-border {
@@ -73,6 +122,63 @@ button:disabled {
   cursor: not-allowed;
   background-color: #000;
   opacity: 0.6;
+}
+
+.post-profile-img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+}
+
+.post-img {
+  height: 200px;
+  border-radius: 12px;
+}
+
+.content-input {
+  resize: none;
+  /* field-sizing: content; */
+}
+
+.content-input:focus-visible {
+  outline: none;
+}
+
+.post-img-remove {
+  position:absolute;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  height: 20px;
+  width: 20px;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  top: 7px;
+  left: 7px; 
+}
+
+.text-blue {
+  color: rgb(29 155 240);
+}
+
+.icon-value {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  color: gray;
+  cursor: pointer;
+}
+
+.icon-value > span {
+  font-size: 14px;
+}
+
+.icon-value > svg:hover {
+  background-color: rgb(0, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.icon-value.repost {
+  color: #00BA7C;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,5 +212,10 @@ button:disabled {
     cursor: not-allowed;
     background-color: #fff;
     opacity: 0.6;
+  }
+
+  .icon-value > svg:hover {
+    background-color: rgb(255, 255, 255, 0.3);
+    border-radius: 50%;
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import ZLogoBlack from "../assets/z-logo-black.png";
 import Modal from "react-modal";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
@@ -30,6 +31,8 @@ function Login() {
 
   const createForm = useRef();
   const loginForm = useRef();
+
+  const navigate = useNavigate();
 
   const [createModel, setCreateModel] = useState({
     username: "",
@@ -87,7 +90,7 @@ function Login() {
       setLoading(true);
       axios
         .post(`${url}/auth/signup`, createModel)
-        .then((res) => {
+        .then(() => {
           setIsOpen(false);
         })
         .catch((err) => {
@@ -122,6 +125,7 @@ function Login() {
           setLoginErrors(null);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("user_id", res.data.user_id);
+          navigate("/home");
         })
         .catch((err) => {
           if (err.response.data.errors) {
