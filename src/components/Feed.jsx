@@ -1,11 +1,12 @@
 import { useState } from "react";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import axiosInst from "../config/axios";
 
 function Feed({ posts, getPosts, setPosts }) {
   // const [posts, setPosts] = useState([]);
   const { user } = useOutletContext();
+  const navigate = useNavigate();
 
   const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
 
@@ -182,10 +183,15 @@ function Feed({ posts, getPosts, setPosts }) {
     }
   }
 
+  const goToPost = (e, id) => {
+    if (e.target.nodeName === "svg" || e.target.nodeName === "path" || e.target.classList.contains("ignore")) return;
+    return navigate(`/post/${id}`);
+  }
+
   return (
     <div className="feed">
-      {posts.map((post) => (
-        <div key={post.keyId} className="border-slate-200 border-t-2 py-2 px-3">
+      {posts.map((post, id) => (
+        <div key={post.keyId} className="border-slate-200 border-b-2 py-2 px-3 feed-post" onClick={(e) => goToPost(e, post.id)}>
           {post.isRepost ? (
             <p className="text-slate-500 ml-6 flex gap-2 items-center text-sm font-semibold">
               <svg
@@ -248,7 +254,7 @@ function Feed({ posts, getPosts, setPosts }) {
                     ) : null}
                     {post.keyId === dropdownVisibleId ? (
                       <div
-                        className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1"
+                        className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1 ignore"
                         style={{ position: "absolute", left: -100 }}
                         onClick={() => deletePost(post)}
                       >

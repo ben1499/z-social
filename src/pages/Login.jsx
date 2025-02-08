@@ -151,7 +151,7 @@ function Login() {
         <h1 className="mb-8 text-7xl font-semibold">Happening now</h1>
         <h3 className="text-3xl mb-9 font-medium">Join today.</h3>
         <div className="w-3/5">
-          <form ref={loginForm}>
+          <form ref={loginForm} method="post" onSubmit={submitLoginForm}>
             <div>
               <label htmlFor="">Email</label>
               <input

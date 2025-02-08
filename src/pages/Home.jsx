@@ -123,7 +123,7 @@ function Home() {
 
   return (
     <div>
-      <div>
+      <div className="border-b border-slate-300">
         <form onSubmit={createPost}>
           <div className="w-full flex px-2 pt-2">
             <img
@@ -131,15 +131,17 @@ function Home() {
               className="post-profile-img rounded-full border-slate-50 border-2"
               alt=""
             />
-            <textarea
-              type="text"
-              required
-              className="mt-3 mb-1 px-2 content-input flex-1 overflow-hidden"
-              value={contentInput}
-              rows={wordCount / 60 + 1}
-              onInput={handleContentInputChange}
-              placeholder="What's happening?"
-            />
+            <div className="grow-wrap" data-replicated-value={contentInput}>
+              <textarea
+                type="text"
+                required
+                className="content-input"
+                value={contentInput}
+                onInput={handleContentInputChange}
+                placeholder="What's happening?"
+                maxLength={300}
+              />
+            </div>
           </div>
           {uploadImage && (
             <div className="mx-6 h-30 relative">
