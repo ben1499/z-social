@@ -1,12 +1,13 @@
 import { useState } from "react";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import axiosInst from "../config/axios";
 
 function Feed({ posts, getPosts, setPosts }) {
   // const [posts, setPosts] = useState([]);
   const { user } = useOutletContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
 
@@ -185,7 +186,7 @@ function Feed({ posts, getPosts, setPosts }) {
 
   const goToPost = (e, id) => {
     if (e.target.nodeName === "svg" || e.target.nodeName === "path" || e.target.classList.contains("ignore")) return;
-    return navigate(`/post/${id}`);
+    return navigate(`/post/${id}`, { state: { from: location } });
   }
 
   return (

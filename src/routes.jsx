@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Notifications from "./pages/Notifications";
 import Post from "./pages/Post";
+import Bookmarks from "./pages/Bookmarks";
 
 const routes = [
     // {
@@ -43,6 +44,10 @@ const routes = [
           {        
             path: "post/:id",
             element: <Post />,
+          },
+          {        
+            path: "bookmarks",
+            element: <Bookmarks />,
           },
         //   {
         //     path: "/profile/:id",
