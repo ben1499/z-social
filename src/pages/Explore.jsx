@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import Feed from "../components/Feed";
@@ -6,31 +6,48 @@ import Feed from "../components/Feed";
 export default function Explore() {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [isLoading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const isFirstMount = useRef(true);
 
-  useEffect(() => {
-    axiosInst
-      .get("/users", {
+  const fetchData = (query = "") => {
+    setLoading(true);
+    return Promise.all([
+      axiosInst.get("/users", {
         params: {
-          searchQuery: "",
+          searchQuery: query,
           limit: 5,
         },
-      })
-      .then((res) => {
-        setSuggestedUsers(res.data.data.filter((user) => !user.isFollowing));
-      });
-
-    axiosInst
-      .get("posts", {
+      }),
+      axiosInst.get("posts", {
         params: {
           is_explore: true,
+          searchQuery: query,
         },
+      }),
+    ])
+      .then(([res1, res2]) => {
+        setSuggestedUsers(res1.data.data.filter((user) => !user.isFollowing));
+        setPosts(res2.data.data);
       })
-      .then((res) => {
-        console.log(res.data);
-        setPosts(res.data.data);
-      });
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData().then(() => {
+      isFirstMount.current = false;
+    });
   }, []);
+
+  useEffect(() => {
+    if (isFirstMount.current) return;
+    const timeout = setTimeout(() => {
+      fetchData(searchInput);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   const toggleFollow = (user) => {
     if (user.isFollowing) {
@@ -73,34 +90,6 @@ export default function Explore() {
   const handleSearch = (e) => {
     setSearchInput(e.target.value);
   };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log("Fetching");
-      axiosInst
-        .get("/users", {
-          params: {
-            searchQuery: searchInput,
-          },
-        })
-        .then((res) => {
-          setSuggestedUsers(res.data.data);
-        });
-
-      axiosInst
-        .get("/posts", {
-          params: {
-            is_explore: true,
-            searchQuery: searchInput,
-          },
-        })
-        .then((res) => {
-          setPosts(res.data.data);
-        });
-    }, 1200);
-
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   return (
     <div className="mt-2">
@@ -151,7 +140,7 @@ export default function Explore() {
           <p className="font-bold text-2xl px-3 mb-3">
             {searchInput ? "Posts" : "Posts for You"}
           </p>
-          <Feed posts={posts} />
+          <Feed posts={posts} setPosts={setPosts} isLoading={isLoading} />
         </div>
       ) : (
         <p className="text-center text-slate-500 mt-4">No more posts found</p>
