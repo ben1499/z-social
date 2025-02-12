@@ -12,6 +12,7 @@ export default function Post() {
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef(null);
+  const stickyRef = useRef(null);
 
   const [post, setPost] = useState(null);
   const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
@@ -25,6 +26,31 @@ export default function Post() {
   const [wordCount, setWordCount] = useState(0);
 
   const [createLoading, setCreateLoading] = useState(false);
+
+  // For sticky header backdrop style
+  useEffect(() => {
+    // timeout to wait for the element to be mounted
+    const timeoutId = setTimeout(() => {
+      const el = stickyRef.current;
+      if (el) {
+        // Check if the ref is attached to an element
+        const observer = new IntersectionObserver(
+          ([e]) =>
+            e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
+          { threshold: [1] }
+        );
+        observer.observe(el);
+  
+        // Cleanup: Important to avoid memory leaks
+        return () => {
+          observer.unobserve(el);
+          clearTimeout(timeoutId)
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     axiosInst
@@ -204,7 +230,7 @@ export default function Post() {
 
   return (
     <div>
-      <div className="flex items-center gap-2 border-b p-2">
+      <div className="flex items-center gap-4 border-b pl-3 py-3 sticky-header" ref={stickyRef}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

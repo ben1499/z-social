@@ -237,6 +237,46 @@ button:disabled {
   background-color: rgb(0, 0, 0, 0.03);
 }
 
+.cover-bg {
+  background-color: gainsboro;
+  height: 170px;
+  width: 100%;
+}
+
+.profile-img {
+  border-radius: 50%;
+  height: 110px;
+  width: 110px;
+  border: 3px solid black;
+  position: absolute;
+  top: 110px;
+  left: 10px;
+  object-fit: cover;
+}
+
+.tabs > .active::after {
+  content: "";
+  display: block;
+  width: 38px;
+  height: 4px;
+  background-color: rgb(29, 155, 240);
+  border-radius: 1px;
+  position: absolute;
+  bottom: 0;
+}
+
+.sticky-header {
+  background-color: white;
+  position: sticky;
+  top: -1px;
+}
+
+/* styles for when the header is in sticky mode */
+.sticky-header.is-pinned {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+} 
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #fff;
@@ -274,4 +314,12 @@ button:disabled {
     background-color: rgb(255, 255, 255, 0.3);
     border-radius: 50%;
   }
+
+  .sticky-header {
+    background-color: black;
+  }
+
+  .sticky-header.is-pinned {
+    background-color: rgba(0, 0, 0, 0.5);
+  } 
 }
