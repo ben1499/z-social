@@ -60,7 +60,7 @@ button:not(.epr-btn) {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover:not(.epr-btn) {
+button:hover:not(.epr-btn):not(:disabled) {
   background-color: rgb(39, 44, 48);
 }
 button:focus,
@@ -99,7 +99,7 @@ button:focus-visible {
 
 .sidebar-list > li:hover {
   background-color: aliceblue;
-} 
+}
 
 .center-section {
   border-left: 1px solid rgb(185, 202, 211);
@@ -155,7 +155,7 @@ button:disabled {
 }
 
 .post-img-remove {
-  position:absolute;
+  position: absolute;
   border-radius: 50% !important;
   padding: 0 !important;
   height: 20px;
@@ -163,7 +163,7 @@ button:disabled {
   font-size: 10px !important;
   font-weight: bold !important;
   top: 7px;
-  left: 7px; 
+  left: 7px;
 }
 
 .text-blue {
@@ -188,7 +188,7 @@ button:disabled {
 }
 
 .icon-value.repost {
-  color: #00BA7C;
+  color: #00ba7c;
 }
 
 .notification-item > svg {
@@ -245,13 +245,38 @@ button:disabled {
 
 .profile-img {
   border-radius: 50%;
-  height: 110px;
-  width: 110px;
-  border: 3px solid black;
+  height: 120px;
+  width: 120px;
+  border: 4px solid #fff;
   position: absolute;
   top: 110px;
   left: 10px;
   object-fit: cover;
+}
+
+.edit-profile-btn {
+  position: absolute;
+  right: 12px;
+  top: -55px;
+  background-color: inherit !important;
+  border: 1px solid rgb(207, 217, 222) !important;
+  color: #000 !important;
+}
+
+.edit-profile-btn:hover {
+  background-color: rgb(15, 20, 25, 0.1) !important;
+}
+
+.edit-profile-btn:focus,
+.edit-profile-btn:focus-visible {
+  outline: none;
+}
+
+.center-absolute {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 }
 
 .tabs > .active::after {
@@ -275,7 +300,78 @@ button:disabled {
 .sticky-header.is-pinned {
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
-} 
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.3rem;
+}
+
+.media-grid > img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* class applied to the body when modal is open */
+.modal-open {
+  overflow: hidden;
+}
+
+.label-field {
+  border: 1px solid black;
+}
+
+.label-field {
+  border: none;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.label-field > label {
+  font-size: 15px;
+  transition: all 0.2s ease-out 0.25s;
+  position: absolute;
+  top: 13px;
+  left: 9px;
+}
+
+.label-field > input {
+  outline: 1px solid rgb(207, 217, 222);
+  padding: 0 8px;
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.label-field > input:focus,
+.label-field > textarea:focus {
+  outline: 2px solid rgb(29, 155, 240);
+}
+
+.label-field > input:focus ~ label,
+.label-field > textarea:focus ~ label {
+  transform: translate(0, -10px);
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.label-field > input:not(:focus, :placeholder-shown) ~ label,
+.label-field > textarea:not(:focus, :placeholder-shown) ~ label {
+  transform: translate(0, -10px);
+  font-size: 13px;
+}
+
+.label-field > textarea {
+  outline: 1px solid rgb(207, 217, 222);
+  padding: 0 8px;
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  resize: none;
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -321,5 +417,17 @@ button:disabled {
 
   .sticky-header.is-pinned {
     background-color: rgba(0, 0, 0, 0.5);
-  } 
+  }
+
+  .profile-img {
+    border: 4px solid #000;
+  }
+
+  .edit-profile-btn {
+    color: unset !important;
+  }
+  
+  .label-field > input {
+    color: #fff;
+  }
 }
