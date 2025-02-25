@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext } from "react";
-import { Outlet, useLocation, Link } from "react-router-dom";
+import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import axiosInst from "../config/axios";
 import { UserContext } from "../contexts/userContext";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
@@ -12,6 +12,7 @@ function Layout() {
   const [notificationCount, setNotificationCount] = useState(0);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosInst.get("/users/profile").then((res) => {
@@ -67,6 +68,12 @@ function Layout() {
         setSuggestedUsers(updatedSuggestUsers);
       }).catch((err) => console.log(err));
     }
+  }
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+    navigate("/login");
   }
 
   return (
@@ -175,7 +182,7 @@ function Layout() {
                 Profile
               </Link>
             </li>
-            <li>
+            <li onClick={handleSignOut}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
