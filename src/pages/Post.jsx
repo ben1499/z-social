@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import axiosInst from "../config/axios";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import EmojiPicker from "emoji-picker-react";
 import { useOutletContext } from "react-router-dom";
 import SinglePost from "../components/SinglePost";
+import useComponentVisible from "../hooks/useComponentVisible";
 
 export default function Post() {
   const { id } = useParams();
@@ -15,13 +16,15 @@ export default function Post() {
   const stickyRef = useRef(null);
 
   const [post, setPost] = useState(null);
-  const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
+  // const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
 
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [imageProgress, setImageProgress] = useState(0);
   const [uploadImage, setUploadImage] = useState(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
+  const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
+    useComponentVisible(false);
 
   const [wordCount, setWordCount] = useState(0);
 
@@ -40,12 +43,12 @@ export default function Post() {
           { threshold: [1] }
         );
         observer.observe(el);
-  
+
         // Cleanup: Important to avoid memory leaks
         return () => {
           observer.unobserve(el);
-          clearTimeout(timeoutId)
-        }
+          clearTimeout(timeoutId);
+        };
       }
     }, 100);
 
@@ -134,12 +137,12 @@ export default function Post() {
 
   const fetchPost = () => {
     axiosInst
-    .get(`/posts/${id}`)
-    .then((res) => {
-      setPost(res.data.data);
-    })
-    .catch((err) => console.log(err));
-  }
+      .get(`/posts/${id}`)
+      .then((res) => {
+        setPost(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const createReply = (e) => {
     e.preventDefault();
@@ -186,7 +189,6 @@ export default function Post() {
     axiosInst
       .post("/images", formData)
       .then((res) => {
-        console.log(res);
         setUploadImage(res.data.url);
         setImageProgress(100);
       })
@@ -222,15 +224,29 @@ export default function Post() {
     } else {
       navigate(-1);
     }
-  }
+  };
 
   const handleReplyIconClick = () => {
     inputRef.current.focus();
-  }
+  };
+
+  const deletePost = (post) => {
+    axiosInst
+      .delete(`/posts/${post.id}`)
+      .then(() => {
+        goBack();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div>
-      <div className="flex items-center gap-4 border-b pl-3 py-3 sticky-header" ref={stickyRef}>
+      <div
+        className="flex items-center gap-4 border-b pl-3 py-3 sticky-header"
+        ref={stickyRef}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -273,34 +289,51 @@ export default function Post() {
             <div className="mb-3">
               <div className="flex justify-between">
                 <div className="flex gap-2">
-                  <img
-                    src={
-                      post.user.profileImgUrl
-                        ? post.user.profileImgUrl
-                        : profilePlaceholder
-                    }
-                    className="post-profile-img rounded-full border-slate-50 border-2"
-                    alt=""
-                  />
+                  <Link
+                    to={`/${post.user.username}`}
+                    state={{ from: location }}
+                  >
+                    <img
+                      src={
+                        post.user.profileImgUrl
+                          ? post.user.profileImgUrl
+                          : profilePlaceholder
+                      }
+                      className="post-profile-img rounded-full border-slate-50 border-2 cursor-pointer hover:brightness-[0.9]"
+                      alt=""
+                    />
+                  </Link>
                   <div>
                     <span className="font-bold leading-none">
-                      {post.user.name}
+                      <Link
+                        to={`/${post.user.username}`}
+                        state={{ from: location }}
+                        className="hover:!underline !decoration-from-font !cursor-pointer"
+                      >
+                        {post.user.name}
+                      </Link>
                     </span>{" "}
-                    <p className="text-slate-600 text-sm leading-none">
-                      @{post.user.username}
+                    <p className="text-slate-600 text-sm leading-none cursor-pointer">
+                      <Link
+                        to={`/${post.user.username}`}
+                        state={{ from: location }}
+                      >
+                        @{post.user.username}
+                      </Link>
                     </p>
                   </div>
                 </div>
                 <div className="relative">
-                  {post.userId ? (
+                  {post.userId === user?.id ? (
                     <svg
+                      ref={triggerRef}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="size-6"
-                      onClick={() => showDropdown(post.keyId)}
+                      className="size-6 hover:bg-slate-100 rounded-full cursor-pointer"
+                      onClick={() => setComponentVisible(!isComponentVisible)}
                     >
                       <path
                         strokeLinecap="round"
@@ -309,9 +342,10 @@ export default function Post() {
                       />
                     </svg>
                   ) : null}
-                  {post.keyId === dropdownVisibleId ? (
+                  {isComponentVisible ? (
                     <div
-                      className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1"
+                      ref={dropRef}
+                      className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1 rounded-lg"
                       style={{ position: "absolute", left: -100 }}
                       onClick={() => deletePost(post)}
                     >
@@ -519,7 +553,12 @@ export default function Post() {
           </form>
           <div>
             {post.replies.map((reply) => (
-              <SinglePost key={reply.id} post={reply} user={user} fetchPost={fetchPost} />
+              <SinglePost
+                key={reply.id}
+                post={reply}
+                user={user}
+                fetchPost={fetchPost}
+              />
             ))}
           </div>
         </div>
