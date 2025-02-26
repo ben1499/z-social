@@ -2,6 +2,7 @@ import { useState } from "react";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import axiosInst from "../config/axios";
+import { getRelativeTime } from "../utilities";
 
 export default function Feed({ posts, getPosts, setPosts, isLoading }) {
   const { user } = useOutletContext();
@@ -184,7 +185,10 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
     <div className="feed">
       {isLoading ? (
         <div className="flex justify-center h-50 overflow-hidden">
-          <svg className="mr-3 size-5 animate-spin overflow-hidden" viewBox="0 0 24 24">
+          <svg
+            className="mr-3 size-5 animate-spin overflow-hidden"
+            viewBox="0 0 24 24"
+          >
             <path
               className="opacity-25"
               fill="currentColor"
@@ -380,29 +384,4 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
       )}
     </div>
   );
-}
-
-function getRelativeTime(value, formattedValue) {
-  const seconds = Math.floor(
-    (new Date().getTime() - new Date(value).getTime()) / 1000
-  );
-  let normalDate = formattedValue.split("PM ")[1];
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  let interval = seconds / 31536000;
-  if (interval > 1) return normalDate;
-  interval = seconds / 2592000;
-  if (interval > 1) return normalDate;
-  interval = seconds / 86400;
-  if (interval > 1) return normalDate;
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return rtf.format(-Math.floor(interval), "hour").replace(/ hours?/, "h");
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-    return rtf
-      .format(-Math.floor(interval), "minute")
-      .replace(/ minutes?/, "m");
-  }
-  return rtf.format(-Math.floor(interval), "second");
 }

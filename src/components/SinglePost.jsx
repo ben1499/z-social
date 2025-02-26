@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import axiosInst from "../config/axios";
+import { getRelativeTime } from "../utilities";
 
 export default function SinglePost({ post, user, fetchPost }) {
   const navigate = useNavigate();
@@ -303,29 +304,4 @@ export default function SinglePost({ post, user, fetchPost }) {
       </div>
     </div>
   );
-}
-
-function getRelativeTime(value, formattedValue) {
-  const seconds = Math.floor(
-    (new Date().getTime() - new Date(value).getTime()) / 1000
-  );
-  let normalDate = formattedValue.split("PM ")[1];
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  let interval = seconds / 31536000;
-  if (interval > 1) return normalDate;
-  interval = seconds / 2592000;
-  if (interval > 1) return normalDate;
-  interval = seconds / 86400;
-  if (interval > 1) return normalDate;
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return rtf.format(-Math.floor(interval), "hour").replace(/ hours?/, "h");
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-    return rtf
-      .format(-Math.floor(interval), "minute")
-      .replace(/ minutes?/, "m");
-  }
-  return rtf.format(-Math.floor(interval), "second");
 }
