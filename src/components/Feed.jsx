@@ -1,6 +1,11 @@
 import { useState } from "react";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
-import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
+import {
+  useOutletContext,
+  useNavigate,
+  useLocation,
+  Link,
+} from "react-router-dom";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
 
@@ -171,14 +176,16 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
     }
   };
 
-  const goToPost = (e, id) => {
+  const goToPost = (e, post) => {
+    if (e.target.classList.contains("profile-link")) 
+      return navigate(`/${post.user.username}`, { state: { from: location } });
     if (
       e.target.nodeName === "svg" ||
       e.target.nodeName === "path" ||
       e.target.classList.contains("ignore")
     )
       return;
-    return navigate(`/post/${id}`, { state: { from: location } });
+    return navigate(`/post/${post.id}`, { state: { from: location } });
   };
 
   return (
@@ -201,7 +208,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
           <div
             key={post.keyId}
             className="border-slate-200 border-b-2 py-2 px-3 feed-post"
-            onClick={(e) => goToPost(e, post.id)}
+            onClick={(e) => goToPost(e, post)}
           >
             {post.isRepost ? (
               <p className="text-slate-500 ml-6 flex gap-2 items-center text-sm font-semibold">
@@ -229,15 +236,17 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                     ? post.user.profileImgUrl
                     : profilePlaceholder
                 }
-                className="post-profile-img rounded-full border-slate-50 border-2"
+                className="post-profile-img rounded-full border-slate-50 border-2 hover:brightness-[0.9] profile-link"
                 alt=""
               />
               <div className="w-full">
                 <div className="mb-3">
                   <div className="flex justify-between">
                     <div>
-                      <span className="font-bold">{post.user.name}</span>{" "}
-                      <span className="text-slate-600">
+                      <span className="font-bold hover:underline decoration-from-font profile-link">
+                        {post.user.name}
+                      </span>{" "}
+                      <span className="text-slate-600 profile-link">
                         @{post.user.username}
                       </span>
                       <span className="text-slate-600 ml-1">
@@ -379,7 +388,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
         ))
       ) : (
         <div className="feed flex justify-center items-center">
-          <p className="text-slate-500">No posts found</p>
+          <p className="text-slate-500 mt-2">No posts found</p>
         </div>
       )}
     </div>

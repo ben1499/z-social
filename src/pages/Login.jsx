@@ -138,7 +138,7 @@ function Login() {
 
   const handleTwitterLogin = () => {
     window.location.href = `${url}/auth/twitter`;
-  }
+  };
 
   const loginEmailError = loginErrors?.find((error) => error.path === "email");
   const loginPasswordError = loginErrors?.find(
@@ -189,7 +189,7 @@ function Login() {
             </p>
             <div className="mt-3">
               <button
-                type="button"
+                type="submit"
                 className="blue-btn w-full py-2 flex justify-center"
                 onClick={submitLoginForm}
               >
@@ -214,7 +214,12 @@ function Login() {
                 <div>or</div>
                 <div className="divide-border grow"></div>
               </div>
-              <button type="button" className="flex justify-center w-full py-2 my-2" onClick={handleTwitterLogin}>
+              <button
+                type="button"
+                className="flex justify-center w-full py-2 my-2"
+                disabled={isLoading}
+                onClick={handleTwitterLogin}
+              >
                 <svg
                   fill={isDarkTheme ? "" : "white"}
                   style={{ width: "30px", height: "25px" }}
@@ -302,7 +307,11 @@ function Login() {
             </p>
           </div>
           <div className="flex justify-end mt-7 gap-4">
-            <button className="py-1 px-3 rounded" disabled={isLoading} onClick={closeModal}>
+            <button
+              className="py-1 px-3 rounded"
+              disabled={isLoading}
+              onClick={closeModal}
+            >
               Cancel
             </button>
             <button

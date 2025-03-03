@@ -6,7 +6,7 @@ export function getRelativeTime(value, formattedValue) {
 
   if (seconds < 3600) {
     if (seconds < 60) {
-      return rtf.format(-seconds, "second");
+      return rtf.format(-seconds, "second").replace(/ seconds?/, "s");
     } else {
       return rtf
         .format(-Math.floor(seconds / 60), "minute")

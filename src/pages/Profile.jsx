@@ -270,24 +270,26 @@ export default function Profile() {
               className="flex items-center gap-4 py-1 pl-3 z-10 sticky-header"
               ref={stickyRef}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5 hover:animate-bounce"
-                onClick={goBack}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                />
-              </svg>
+              <div className="hover:bg-slate-300 rounded-full p-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-5"
+                  onClick={goBack}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                  />
+                </svg>
+              </div>
               <div>
                 <p className="text-xl font-semibold">{user.name}</p>
-                <p className="text-slate-500 text-sm">{user.postCount} posts</p>
+                <p className="text-slate-500 text-sm">{user.postCount} {user.postCount === 1 ? "post" : "posts"}</p>
               </div>
             </div>
             <div className="relative">
@@ -372,7 +374,7 @@ export default function Profile() {
                       />
                     ))
                   ) : (
-                    <p className="text-center text-slate-500">No media found</p>
+                    <p className="text-center text-slate-500 mt-2">No media found</p>
                   )}
                 </div>
               )}
