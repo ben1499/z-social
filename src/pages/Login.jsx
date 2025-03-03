@@ -136,6 +136,10 @@ function Login() {
     }
   };
 
+  const handleTwitterLogin = () => {
+    window.location.href = `${url}/auth/twitter`;
+  }
+
   const loginEmailError = loginErrors?.find((error) => error.path === "email");
   const loginPasswordError = loginErrors?.find(
     (error) => error.path === "password"
@@ -210,7 +214,7 @@ function Login() {
                 <div>or</div>
                 <div className="divide-border grow"></div>
               </div>
-              <button className="flex justify-center w-full py-2 my-2">
+              <button type="button" className="flex justify-center w-full py-2 my-2" onClick={handleTwitterLogin}>
                 <svg
                   fill={isDarkTheme ? "" : "white"}
                   style={{ width: "30px", height: "25px" }}

@@ -8,11 +8,16 @@ import Notifications from "./pages/Notifications";
 import Post from "./pages/Post";
 import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
+import AuthSuccess from "./pages/AuthSuccess";
 
 const routes = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/auth-success",
+    element: <AuthSuccess />,
   },
   {
     path: "/",
