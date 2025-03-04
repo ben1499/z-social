@@ -123,7 +123,7 @@ function Layout() {
     setUploadImage(null);
     setWordCount(0);
     setPickerVisible(false);
-  }
+  };
 
   const openModal = () => {
     if (uploadImage) {
@@ -131,7 +131,7 @@ function Layout() {
     }
     resetPostForm();
     setIsOpen(true);
-  }
+  };
 
   const createPost = (e) => {
     e.preventDefault();
@@ -342,10 +342,7 @@ function Layout() {
                 </svg>
                 Sign Out
               </li>
-              <button
-                className="!rounded-full w-full mt-4"
-                onClick={openModal}
-              >
+              <button className="!rounded-full w-full mt-4" onClick={openModal}>
                 Post
               </button>
             </ul>
@@ -581,14 +578,28 @@ function Layout() {
                   />
                 </svg>
               </div>
-              <div>
+              <div className="flex justify-center">
                 {wordCount ? (
-                  <span className="mr-2 text-blue">{wordCount}/300</span>
+                  <span className="mr-2 text-blue mt-1">{wordCount}/300</span>
                 ) : null}
                 <button
-                  className="!py-1 !px-4 !rounded-full"
+                  className="!py-1 !px-4 !rounded-full flex justify-center"
                   disabled={wordCount > 300}
                 >
+                  {createLoading ? (
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 4V2m0 20v-2m8-14h2M4 12H2m15.293 15.293l-1.414-1.414M4.293 4.293l1.414 1.414m16 0l-1.414 1.414M4 20l1.414-1.414"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : null}
                   Post
                 </button>
               </div>

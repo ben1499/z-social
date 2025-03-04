@@ -16,7 +16,6 @@ export default function Post() {
   const stickyRef = useRef(null);
 
   const [post, setPost] = useState(null);
-  // const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
 
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -130,11 +129,6 @@ export default function Post() {
     }
   };
 
-  const showDropdown = (postId) => {
-    if (postId === dropdownVisibleId) setDropdownVisibleId(null);
-    else setDropdownVisibleId(postId);
-  };
-
   const fetchPost = () => {
     axiosInst
       .get(`/posts/${id}`)
@@ -210,7 +204,7 @@ export default function Post() {
           image_id,
         },
       })
-      .then((res) => {
+      .then(() => {
         setUploadImage(null);
       })
       .catch((err) => {
@@ -546,7 +540,7 @@ export default function Post() {
                 ) : null}
                 <button
                   className="!py-1 !px-4 !rounded-full"
-                  disabled={wordCount > 300}
+                  disabled={wordCount > 300 || createLoading}
                 >
                   Reply
                 </button>

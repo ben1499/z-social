@@ -232,7 +232,7 @@ function Login() {
                 Sign in with X
               </button>
               <p className="text-center">
-                Don't have an account?{" "}
+                Don{"'"}t have an account?{" "}
                 <a className="cursor-pointer" onClick={() => setIsOpen(true)}>
                   Create account
                 </a>

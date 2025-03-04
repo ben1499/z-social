@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Feed from "../components/Feed";
 import axiosInst from "../config/axios";
 import { useOutletContext } from "react-router-dom";
@@ -37,15 +37,15 @@ function Home() {
 
   const getPosts = () => {
     axiosInst
-    .get(`${url}/posts`, {
-      params: {
-        is_explore: false,
-      },
-    })
-    .then((res) => {
-      setPosts(res.data.data);
-    });
-  }
+      .get(`${url}/posts`, {
+        params: {
+          is_explore: false,
+        },
+      })
+      .then((res) => {
+        setPosts(res.data.data);
+      });
+  };
 
   useWatchEffect(() => {
     getPosts();
@@ -94,7 +94,7 @@ function Home() {
           image_id,
         },
       })
-      .then((res) => {
+      .then(() => {
         setUploadImage(null);
       })
       .catch((err) => {
@@ -212,8 +212,15 @@ function Home() {
               </svg>
             </div>
             <div>
-              {wordCount ? <span className="mr-2 text-blue">{wordCount}/300</span> : null}
-              <button className="!py-1 !px-4 !rounded-full" disabled={wordCount > 300}>Post</button>
+              {wordCount ? (
+                <span className="mr-2 text-blue">{wordCount}/300</span>
+              ) : null}
+              <button
+                className="!py-1 !px-4 !rounded-full"
+                disabled={wordCount > 300 || createLoading}
+              >
+                Post
+              </button>
             </div>
           </div>
         </form>

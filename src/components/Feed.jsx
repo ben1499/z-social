@@ -4,10 +4,10 @@ import {
   useOutletContext,
   useNavigate,
   useLocation,
-  Link,
 } from "react-router-dom";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
+import PropTypes from "prop-types";
 
 export default function Feed({ posts, getPosts, setPosts, isLoading }) {
   const { user } = useOutletContext();
@@ -393,4 +393,11 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
       )}
     </div>
   );
+}
+
+Feed.propTypes = {
+  posts: PropTypes.array,
+  getPosts: PropTypes.func,
+  setPosts: PropTypes.func,
+  isLoading: PropTypes.bool
 }

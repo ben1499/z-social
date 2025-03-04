@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
+import PropTypes from "prop-types";
 
 export default function SinglePost({ post, user, fetchPost }) {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ export default function SinglePost({ post, user, fetchPost }) {
       e.target.classList.contains("ignore")
     )
       return;
-    console.log(e.target.nodeName);
     navigate(`/post/${id}`, { state: { from: location } });
   };
 
@@ -52,20 +52,7 @@ export default function SinglePost({ post, user, fetchPost }) {
         axiosInst
           .delete(`/posts/${post.id}/bookmark`)
           .then(() => {
-            const updatedPosts = posts.map((item) => {
-              if (item.id === post.id) {
-                return {
-                  ...item,
-                  isBookmarked: false,
-                  bookmarkCount: post.bookmarkCount - 1,
-                };
-              }
-              return {
-                ...item,
-              };
-            });
-  
-            setPosts(updatedPosts);
+            fetchPost();
           })
           .catch((err) => {
             console.log(err);
@@ -74,20 +61,7 @@ export default function SinglePost({ post, user, fetchPost }) {
         axiosInst
           .post(`/posts/${post.id}/bookmark`)
           .then(() => {
-            const updatedPosts = posts.map((item) => {
-              if (item.id === post.id) {
-                return {
-                  ...item,
-                  isBookmarked: true,
-                  bookmarkCount: post.bookmarkCount + 1,
-                };
-              }
-              return {
-                ...item,
-              };
-            });
-  
-            //   setPosts(updatedPosts);
+            fetchPost();
           })
           .catch((err) => {
             console.log(err);
@@ -304,4 +278,10 @@ export default function SinglePost({ post, user, fetchPost }) {
       </div>
     </div>
   );
+}
+
+SinglePost.propTypes = {
+  post: PropTypes.object,
+  user: PropTypes.object,
+  fetchPost: PropTypes.func,
 }
