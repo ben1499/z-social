@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import Feed from "../components/Feed";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
+import useWatchEffect from "../hooks/useWatchEffect";
 
 export default function Bookmarks() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [query, setQuery] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const isFirstMount = useRef(true);
 
   const fetchPosts = (query = "") => {
     setLoading(true);
@@ -26,16 +26,10 @@ export default function Bookmarks() {
   };
 
   useEffect(() => {
-    fetchPosts()
-    .then(() => {
-      isFirstMount.current = false;
-    })
+    fetchPosts();
   }, []);
 
-  useEffect(() => {
-    // Skip if this is the first mount
-    if (isFirstMount.current) return;
-
+  useWatchEffect(() => {
     const timeout = setTimeout(() => {
       fetchPosts(query);
     }, 1000)

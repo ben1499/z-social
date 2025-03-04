@@ -1,14 +1,14 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import Feed from "../components/Feed";
+import useWatchEffect from "../hooks/useWatchEffect";
 
 export default function Explore() {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const isFirstMount = useRef(true);
 
   const fetchData = (query = "") => {
     setLoading(true);
@@ -35,13 +35,10 @@ export default function Explore() {
   };
 
   useEffect(() => {
-    fetchData().then(() => {
-      isFirstMount.current = false;
-    });
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (isFirstMount.current) return;
+  useWatchEffect(() => {
     const timeout = setTimeout(() => {
       fetchData(searchInput);
     }, 1000);

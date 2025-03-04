@@ -4,11 +4,14 @@ import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
 import PropTypes from "prop-types";
+import useComponentVisible from "../hooks/useComponentVisible";
 
 export default function SinglePost({ post, user, fetchPost }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
+
+  const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
+    useComponentVisible();
 
   const goToPost = (e, id) => {
     if (
@@ -18,11 +21,6 @@ export default function SinglePost({ post, user, fetchPost }) {
     )
       return;
     navigate(`/post/${id}`, { state: { from: location } });
-  };
-
-  const showDropdown = (postId) => {
-    if (postId === dropdownVisibleId) setDropdownVisibleId(null);
-    else setDropdownVisibleId(postId);
   };
 
   const toggleLike = (post) => {
@@ -47,49 +45,49 @@ export default function SinglePost({ post, user, fetchPost }) {
     }
   };
 
-    const toggleBookmark = (post) => {
-      if (post.isBookmarked) {
-        axiosInst
-          .delete(`/posts/${post.id}/bookmark`)
-          .then(() => {
-            fetchPost();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        axiosInst
-          .post(`/posts/${post.id}/bookmark`)
-          .then(() => {
-            fetchPost();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    };
-  
-    const toggleRepost = (post) => {
-      if (post.isRepostedByUser) {
-        axiosInst
-          .delete(`/posts/${post.id}/repost`)
-          .then(() => {
-            fetchPost();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        axiosInst
-          .post(`/posts/${post.id}/repost`)
-          .then(() => {
-            fetchPost();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    };
+  const toggleBookmark = (post) => {
+    if (post.isBookmarked) {
+      axiosInst
+        .delete(`/posts/${post.id}/bookmark`)
+        .then(() => {
+          fetchPost();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      axiosInst
+        .post(`/posts/${post.id}/bookmark`)
+        .then(() => {
+          fetchPost();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  const toggleRepost = (post) => {
+    if (post.isRepostedByUser) {
+      axiosInst
+        .delete(`/posts/${post.id}/repost`)
+        .then(() => {
+          fetchPost();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      axiosInst
+        .post(`/posts/${post.id}/repost`)
+        .then(() => {
+          fetchPost();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   const deletePost = (post) => {
     axiosInst
@@ -151,13 +149,14 @@ export default function SinglePost({ post, user, fetchPost }) {
                 {post.userId === user?.id ? (
                   <div className="icon-value">
                     <svg
+                      ref={triggerRef}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
                       className="size-6"
-                      onClick={() => showDropdown(post.keyId)}
+                      onClick={() => setComponentVisible(!isComponentVisible)}
                     >
                       <path
                         strokeLinecap="round"
@@ -167,8 +166,9 @@ export default function SinglePost({ post, user, fetchPost }) {
                     </svg>
                   </div>
                 ) : null}
-                {post.keyId === dropdownVisibleId ? (
+                {isComponentVisible ? (
                   <div
+                    ref={dropRef}
                     className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1 ignore"
                     style={{ position: "absolute", left: -100 }}
                     onClick={() => deletePost(post)}
@@ -284,4 +284,4 @@ SinglePost.propTypes = {
   post: PropTypes.object,
   user: PropTypes.object,
   fetchPost: PropTypes.func,
-}
+};
