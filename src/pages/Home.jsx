@@ -4,13 +4,14 @@ import axiosInst from "../config/axios";
 import { useOutletContext } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
+import useWatchEffect from "../hooks/useWatchEffect";
 
 const url = import.meta.env.VITE_API_URL;
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const { user } = useOutletContext();
+  const { user, triggerPostsFetch } = useOutletContext();
   const [contentInput, setContentInput] = useState("");
 
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -45,6 +46,10 @@ function Home() {
       setPosts(res.data.data);
     });
   }
+
+  useWatchEffect(() => {
+    getPosts();
+  }, [triggerPostsFetch]);
 
   const handleContentInputChange = (e) => {
     setContentInput(e.target.value);

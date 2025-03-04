@@ -4,11 +4,40 @@ import axiosInst from "../config/axios";
 import { UserContext } from "../contexts/userContext";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useComponentVisible from "../hooks/useComponentVisible";
+import Modal from "react-modal";
+import EmojiPicker from "emoji-picker-react";
+
+const customStyles = {
+  content: {
+    width: "35%",
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    borderRadius: "20px",
+    padding: "12px",
+    paddingBottom: "30px",
+    height: "70%",
+  },
+};
 
 function Layout() {
   const [user, setUser] = useState(null);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
+
+  // Post creation state
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [isPickerVisible, setPickerVisible] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [contentInput, setContentInput] = useState("");
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [imageProgress, setImageProgress] = useState(0);
+  const [uploadImage, setUploadImage] = useState(null);
+  const [wordCount, setWordCount] = useState(0);
+  const [triggerPostsFetch, setTriggerPostsFetch] = useState(0);
 
   const { triggerRef, dropRef, isComponentVisible, setComponentVisible } =
     useComponentVisible();
@@ -39,6 +68,93 @@ function Layout() {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  const handleContentInputChange = (e) => {
+    setContentInput(e.target.value);
+    setWordCount(e.target.value.length);
+  };
+
+  const handleEmojiClick = (value) => {
+    setContentInput(contentInput + value.emoji);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploadLoading(true);
+    setImageProgress(0);
+    const timer = setTimeout(() => {
+      setImageProgress(imageProgress + 10);
+    }, 500);
+    axiosInst
+      .post("/images", formData)
+      .then((res) => {
+        setUploadImage(res.data.url);
+        setImageProgress(100);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        clearTimeout(timer);
+        setUploadLoading(false);
+      });
+  };
+
+  const removeImage = () => {
+    const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
+    axiosInst
+      .delete("/images/", {
+        params: {
+          image_id,
+        },
+      })
+      .then(() => {
+        setUploadImage(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const resetPostForm = () => {
+    setContentInput("");
+    setUploadImage(null);
+    setWordCount(0);
+    setPickerVisible(false);
+  }
+
+  const openModal = () => {
+    if (uploadImage) {
+      removeImage();
+    }
+    resetPostForm();
+    setIsOpen(true);
+  }
+
+  const createPost = (e) => {
+    e.preventDefault();
+    setCreateLoading(true);
+    axiosInst
+      .post("/posts", {
+        content: contentInput,
+        parentPostId: null,
+        imgUrl: uploadImage,
+      })
+      .then(() => {
+        resetPostForm();
+        setIsOpen(false);
+        if (location.pathname === "/home")
+          setTriggerPostsFetch(triggerPostsFetch + 1);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setCreateLoading(false);
+      });
+  };
 
   const toggleFollow = (user) => {
     if (user.isFollowing) {
@@ -226,6 +342,12 @@ function Layout() {
                 </svg>
                 Sign Out
               </li>
+              <button
+                className="!rounded-full w-full mt-4"
+                onClick={openModal}
+              >
+                Post
+              </button>
             </ul>
             {user && isComponentVisible && (
               <ul
@@ -314,7 +436,7 @@ function Layout() {
           ) : null}
         </div>
         <div className="w-2/6 center-section">
-          <Outlet context={{ user }} />
+          <Outlet context={{ user, triggerPostsFetch }} />
         </div>
         <div className="right-bar">
           <input
@@ -352,6 +474,127 @@ function Layout() {
             </div>
           </div>
         </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setIsOpen(false)}
+          style={customStyles}
+          shouldCloseOnOverlayClick={false}
+          contentLabel="Create Post"
+          bodyOpenClassName="modal-open"
+        >
+          <div className="rounded-full hover:bg-slate-300 cursor-pointer w-fit p-1 mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-5"
+              onClick={() => setIsOpen(false)}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18 18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
+          <form onSubmit={createPost}>
+            <div className="w-full flex px-2 pt-2">
+              <img
+                src={user?.profileImgUrl ?? personPlaceholder}
+                className="post-profile-img rounded-full border-slate-50 border-2"
+                alt=""
+              />
+              <div className="grow-wrap" data-replicated-value={contentInput}>
+                <textarea
+                  type="text"
+                  required
+                  className="content-input"
+                  value={contentInput}
+                  onInput={handleContentInputChange}
+                  placeholder="What's happening?"
+                  maxLength={300}
+                />
+              </div>
+            </div>
+            {uploadImage && (
+              <div className="mx-6 h-30 relative">
+                <button className="post-img-remove" onClick={removeImage}>
+                  X
+                </button>
+                <img src={uploadImage} alt="" className="post-img" />
+              </div>
+            )}
+            {uploadLoading ? (
+              <div className="mb-2 w-full bg-gray-200 rounded-full dark:bg-gray-700">
+                <div
+                  className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                  style={{ width: `${imageProgress}%` }}
+                ></div>
+              </div>
+            ) : null}
+            <div className="flex justify-between items-center pb-4 px-1 border-b-2">
+              <div className="flex items-center gap-2 pl-2 relative">
+                <label htmlFor="image1" className="cursor-pointer">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6 text-blue"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                    />
+                  </svg>
+                </label>
+                <input
+                  id="image1"
+                  type="file"
+                  className="hidden"
+                  accept="image/png, image/jpeg, image/gif"
+                  onChange={handleImageUpload}
+                />
+                {isPickerVisible ? (
+                  <EmojiPicker
+                    style={{ position: "absolute", top: 25 }}
+                    onEmojiClick={handleEmojiClick}
+                  />
+                ) : null}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6 cursor-pointer text-blue"
+                  onClick={() => setPickerVisible(!isPickerVisible)}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+                  />
+                </svg>
+              </div>
+              <div>
+                {wordCount ? (
+                  <span className="mr-2 text-blue">{wordCount}/300</span>
+                ) : null}
+                <button
+                  className="!py-1 !px-4 !rounded-full"
+                  disabled={wordCount > 300}
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+          </form>
+        </Modal>
       </div>
     </UserContext.Provider>
   );
