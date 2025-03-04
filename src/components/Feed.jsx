@@ -207,7 +207,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
         posts.map((post) => (
           <div
             key={post.keyId}
-            className="border-slate-200 border-b-2 py-2 px-3 feed-post"
+            className="border-slate-200 border-b-2 py-2 px-3 feed-post transition-colors"
             onClick={(e) => goToPost(e, post)}
           >
             {post.isRepost ? (

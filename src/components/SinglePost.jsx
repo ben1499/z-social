@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import axiosInst from "../config/axios";

@@ -261,6 +261,24 @@ export default function Profile() {
       });
   };
 
+  const toggleFollow = () => {
+    if (user.isFollowing) {
+      axiosInst
+        .delete(`/users/follow/${user.id}`)
+        .then(() => {
+          fetchUser();
+        })
+        .catch((err) => console.log(err));
+    } else {
+      axiosInst
+        .post(`/users/follow/${user.id}`)
+        .then(() => {
+          fetchUser();
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   return (
     <div>
       <div>
@@ -289,7 +307,9 @@ export default function Profile() {
               </div>
               <div>
                 <p className="text-xl font-semibold">{user.name}</p>
-                <p className="text-slate-500 text-sm">{user.postCount} {user.postCount === 1 ? "post" : "posts"}</p>
+                <p className="text-slate-500 text-sm">
+                  {user.postCount} {user.postCount === 1 ? "post" : "posts"}
+                </p>
               </div>
             </div>
             <div className="relative">
@@ -301,12 +321,26 @@ export default function Profile() {
               />
             </div>
             <div className="mt-[70px] pl-3 relative">
-              {user?.isCurrentUser && (
+              {user?.isCurrentUser ? (
                 <button
                   className="edit-profile-btn !rounded-full !px-4 !py-1"
                   onClick={showModal}
                 >
                   Edit Profile
+                </button>
+              ) : user?.isFollowing ? (
+                <button
+                  className="!rounded-full !px-4 !py-1 edit-profile-btn"
+                  onClick={toggleFollow}
+                >
+                  Following
+                </button>
+              ) : (
+                <button
+                  className="!rounded-full !px-4 !py-1 absolute top-[-55px] right-[12px]"
+                  onClick={toggleFollow}
+                >
+                  Follow
                 </button>
               )}
 
@@ -374,7 +408,9 @@ export default function Profile() {
                       />
                     ))
                   ) : (
-                    <p className="text-center text-slate-500 mt-2">No media found</p>
+                    <p className="text-center text-slate-500 mt-2">
+                      No media found
+                    </p>
                   )}
                 </div>
               )}

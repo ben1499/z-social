@@ -3,12 +3,16 @@ import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import Feed from "../components/Feed";
 import useWatchEffect from "../hooks/useWatchEffect";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Explore() {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchData = (query = "") => {
     setLoading(true);
@@ -88,6 +92,11 @@ export default function Explore() {
     setSearchInput(e.target.value);
   };
 
+  const goToProfile = (user, e) => {
+    if (e.target.classList.contains("ignore")) return;
+    navigate(`/${user.username}`, { state: { from: location } });
+  }
+
   return (
     <div className="mt-2">
       <div className="mx-3">
@@ -100,29 +109,31 @@ export default function Explore() {
         />
       </div>
       {suggestedUsers.length ? (
-        <div className="mt-4 mb-2 border-b px-3">
-          <p className="font-bold text-2xl">
+        <div className="mt-4 mb-2 border-b">
+          <p className="font-bold text-2xl px-3">
             {searchInput ? "Users" : "Who to follow"}
           </p>
           <div className="mt-4">
             {suggestedUsers.map((user) => (
               <div
-                className="flex justify-between items-center mb-4"
+                className="flex justify-between items-center px-3 py-3 cursor-pointer hover:bg-[rgb(0,0,0,0.03)]"
                 key={user.id}
+                onClick={(e) => goToProfile(user, e)}
               >
                 <div className="flex gap-2">
                   <img
-                    className="rounded-full post-profile-img"
+                    className="rounded-full post-profile-img hover:brightness-[0.9]"
                     src={user.profileImgUrl || personPlaceholder}
                     alt=""
                   />
                   <div>
-                    {user.name}
-                    <p className="text-sm">@{user.username}</p>
+                    <p className="hover:underline leading-5 font-semibold">{user.name}</p>
+                    <p className="text-sm text-slate-600">@{user.username}</p>
+                    <p className="text-[15px] mt-[3px]">{user.bio}</p>
                   </div>
                 </div>
                 <button
-                  className="!rounded-full !px-4 !py-1"
+                  className="!rounded-full !px-4 !py-1 ignore"
                   onClick={() => toggleFollow(user)}
                 >
                   {user.isFollowing ? "Following" : "Follow"}
@@ -134,7 +145,7 @@ export default function Explore() {
       ) : null}
       {posts.length ? (
         <div>
-          <p className="font-bold text-2xl px-3 mb-3">
+          <p className="font-bold text-2xl px-3 mb-3 mt-4">
             {searchInput ? "Posts" : "Posts for You"}
           </p>
           <Feed posts={posts} setPosts={setPosts} isLoading={isLoading} />

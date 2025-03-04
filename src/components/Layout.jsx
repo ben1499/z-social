@@ -200,6 +200,11 @@ function Layout() {
     navigate("/login");
   };
 
+  const goToProfile = (user, e) => {
+    if (e.target.classList.contains("ignore")) return;
+    navigate(`/${user.username}`, { state: { from: location } });
+  }
+
   return (
     <UserContext.Provider value={user}>
       <div className="flex">
@@ -389,7 +394,7 @@ function Layout() {
             )}
           </div>
           {user ? (
-            <div className="flex items-center justify-between relative mt-auto mb-6 hover:bg-[rgb(15,20,25,0.1)] rounded-full py-3 px-2 w-[120%]">
+            <div className="flex items-center justify-between relative mt-auto mb-6 hover:bg-[rgb(15,20,25,0.1)] rounded-full py-3 px-2 w-[120%] transition-colors">
               <div className="flex gap-2">
                 <Link to={`/${user.username}`} state={{ from: location }}>
                   <img
@@ -437,31 +442,32 @@ function Layout() {
         </div>
         <div className="right-bar">
           <input
-            className="border-slate-200 border-2 rounded-full px-3 py-1"
+            className="border-slate-200 border-2 rounded-full px-3 py-1 w-[330px]"
             type="text"
             placeholder="Search"
           />
-          <div className="border-2 p-4 mt-6 rounded-lg suggestion-box">
-            <p className="font-bold mb-3">You might like</p>
+          <div className="border-2 pt-4 pb-2 mt-6 rounded-xl suggestion-box">
+            <p className="font-bold mb-5 text-xl px-3">You might like</p>
             <div>
               {suggestedUsers.map((user) => (
                 <div
-                  className="flex justify-between items-center mb-4"
+                  className="flex justify-between items-center cursor-pointer px-3 py-2 hover:bg-[rgb(0,0,0,0.03)]"
                   key={user.id}
+                  onClick={(e) => goToProfile(user, e)}
                 >
                   <div className="flex gap-2">
                     <img
-                      className="rounded-full post-profile-img"
+                      className="rounded-full post-profile-img hover:brightness-[0.9]"
                       src={user.profileImgUrl || personPlaceholder}
                       alt=""
                     />
                     <div>
-                      {user.name}
+                      <p className="hover:underline font-medium">{user.name}</p>
                       <p className="text-slate-600 text-sm">@{user.username}</p>
                     </div>
                   </div>
                   <button
-                    className="!rounded-full !px-4 !py-1"
+                    className="!rounded-full !px-4 !py-1 ignore"
                     onClick={() => toggleFollow(user)}
                   >
                     {user.isFollowing ? "Following" : "Follow"}
