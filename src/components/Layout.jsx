@@ -6,6 +6,7 @@ import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useComponentVisible from "../hooks/useComponentVisible";
 import Modal from "react-modal";
 import EmojiPicker from "emoji-picker-react";
+import UserSearch from "./UserSearch";
 
 const customStyles = {
   content: {
@@ -441,11 +442,7 @@ function Layout() {
           <Outlet context={{ user, triggerPostsFetch }} />
         </div>
         <div className="right-bar">
-          <input
-            className="border-slate-200 border-2 rounded-full px-3 py-1 w-[330px]"
-            type="text"
-            placeholder="Search"
-          />
+          <UserSearch />
           <div className="border-2 pt-4 pb-2 mt-6 rounded-xl suggestion-box">
             <p className="font-bold mb-5 text-xl px-3">You might like</p>
             <div>
