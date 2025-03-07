@@ -323,10 +323,6 @@ button:disabled {
 }
 
 .label-field {
-  border: 1px solid black;
-}
-
-.label-field {
   border: none;
   position: relative;
   margin-bottom: 20px;
@@ -346,6 +342,20 @@ button:disabled {
   padding-left: 10px;
   padding-top: 20px;
   padding-bottom: 10px;
+}
+
+.label-field > .char-count {
+  visibility: hidden;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.label-field > input:focus ~ .char-count,
+.label-field > textarea:focus ~ .char-count {
+  visibility: visible;
 }
 
 .label-field > input:focus,

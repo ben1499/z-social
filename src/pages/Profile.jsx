@@ -57,6 +57,8 @@ export default function Profile() {
   });
   const [uploadedProfileImg, setUploadedProfileImg] = useState(null);
   const [uploadedCoverImg, setUploadedCoverImg] = useState(null);
+  const [nameWordCount, setNameWordCount] = useState(0);
+  const [bioWordCount, setBioWordCount] = useState(0);
 
   const editForm = useRef();
 
@@ -195,14 +197,16 @@ export default function Profile() {
   };
 
   const handleEditModelChange = (e) => {
+    setEditModel({ ...editModel, [e.target.name]: e.target.value });
     switch (e.target.name) {
       case "name":
-        setEditModel({ ...editModel, name: e.target.value });
+        setNameWordCount(e.target.value.length)
         break;
       case "bio":
-        setEditModel({ ...editModel, bio: e.target.value });
+        setBioWordCount(e.target.value.length);
         break;
     }
+    setNameWordCount
   };
 
   const showModal = () => {
@@ -588,7 +592,7 @@ export default function Profile() {
         </div>
 
         <form ref={editForm} className="px-4 edit-form mt-[4.3rem]">
-          <div className="mt-3 label-field" tabIndex={0}>
+          <div className="mt-3 label-field">
             <input
               className="w-full block rounded-sm"
               type="text"
@@ -597,12 +601,13 @@ export default function Profile() {
               placeholder=""
               required
               value={editModel.name}
+              maxLength={50}
               onChange={handleEditModelChange}
             />
-            <label className="flex justify-between" htmlFor="name">
+            <label htmlFor="name">
               <p>Name</p>
-              {/* <p>1/50</p> */}
             </label>
+            <p className="char-count">{nameWordCount} / 50</p>
             <p className="text-red-500 text-sm italic">
               {createNameError ? createNameError.msg : null}
             </p>
@@ -615,9 +620,11 @@ export default function Profile() {
               type="email"
               name="bio"
               value={editModel.bio}
+              maxLength={100}
               onChange={handleEditModelChange}
             />
             <label htmlFor="bio">Bio</label>
+            <p className="char-count">{bioWordCount} / 100</p>
           </div>
         </form>
       </Modal>
