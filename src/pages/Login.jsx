@@ -48,7 +48,11 @@ function Login() {
 
   useEffect(() => {
     setDarkTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-  }, []);
+
+    if (localStorage.getItem("token")) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   const closeModal = () => {
     setCreateErrors(null);

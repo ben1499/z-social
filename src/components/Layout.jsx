@@ -7,6 +7,7 @@ import useComponentVisible from "../hooks/useComponentVisible";
 import Modal from "react-modal";
 import EmojiPicker from "emoji-picker-react";
 import UserSearch from "./UserSearch";
+import { useSnackbar } from "react-simple-snackbar";
 
 const customStyles = {
   content: {
@@ -23,6 +24,18 @@ const customStyles = {
     height: "70%",
   },
 };
+
+const options = {
+  position: 'bottom-left',
+  closeStyle: {
+    backgroundColor: "inherit",
+    padding: "5px",
+
+    "&:hover": {
+      opacity: 0.5
+    }
+  },
+}
 
 function Layout() {
   const [user, setUser] = useState(null);
@@ -43,13 +56,30 @@ function Layout() {
   const { triggerRef, dropRef, isComponentVisible, setComponentVisible } =
     useComponentVisible();
 
+  const [openSnackbar] = useSnackbar(options);
+
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     axiosInst.get("/users/profile").then((res) => {
       setUser(res.data.data);
-    });
+    }).catch((err) => {
+      console.log(err);
+      if (!err.response || err.response.status !== 400) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user_id");
+        openSnackbar("Something went wrong. Please try again.", 2500);
+        return navigate("/login");
+      }
+
+      if (err.response.status === 401 || err.response.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user_id");
+        openSnackbar("Please login to your account", 2500);
+        return navigate("/login");
+      }
+    })
 
     axiosInst
       .get("/users", {
