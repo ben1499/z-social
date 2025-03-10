@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
@@ -56,9 +56,16 @@ function Layout() {
     useComponentVisible();
 
   const [openSnackbar] = useSnackbar(options);
+  const openSnackbarRef = useRef();
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Update the ref whenever openSnackbar changes
+  // to fix issue where openSnackbar as dependency in second useEffect causes infinite re-renders
+  useEffect(() => {
+    openSnackbarRef.current = openSnackbar;
+  }, [openSnackbar]);
 
   useEffect(() => {
     axiosInst.get("/users/profile").then((res) => {
@@ -68,14 +75,14 @@ function Layout() {
       if (!err.response || err.response.status !== 400) {
         localStorage.removeItem("token");
         localStorage.removeItem("user_id");
-        openSnackbar("Something went wrong. Please try again.", 2500);
+        openSnackbarRef.current("Something went wrong. Please try again.", 2500);
         return navigate("/login");
       }
 
       if (err.response.status === 401 || err.response.status === 403) {
         localStorage.removeItem("token");
         localStorage.removeItem("user_id");
-        openSnackbar("Please login to your account", 2500);
+        openSnackbarRef.current("Please login to your account", 2500);
         return navigate("/login");
       }
     })
@@ -97,7 +104,7 @@ function Layout() {
         setNotificationCount(res.data.data.unreadCount);
       })
       .catch((err) => console.log(err));
-  }, [navigate, openSnackbar]);
+  }, [navigate]);
 
   const handleContentInputChange = (e) => {
     setContentInput(e.target.value);
