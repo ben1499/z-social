@@ -1,22 +1,39 @@
 import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
-    axiosInst.get("/notifications").then((res) => {
+    axiosInst.get("/notifications", {
+      params: {
+        limit: 10
+      }
+    }).then((res) => {
       setNotifications(res.data.data);
     });
   }, []);
+
+  const goToPost = (e, notification) => {
+    if (e.target.classList.contains("ignore") && notification.sender) {
+        return navigate(`/${notification.sender.username}`)
+    }
+    if (notification.postId) {
+      navigate(`/post/${notification.postId}`, { state: { from: location } });
+    }
+  }
 
   return (
     <div>
       <p className="font-bold text-xl border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] p-2">Notifications</p>
       <div>
         {notifications.map((notification) => (
-          <div key={notification.id} className="flex gap-3 notification-item border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3">
+          <div key={notification.id} className="flex gap-3 notification-item cursor-pointer border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3" onClick={(e) => goToPost(e, notification)}>
             {notification.type === "LIKE" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -67,10 +84,10 @@ export default function Notifications() {
             <div>
               <img
                 src={notification.sender.profileImgUrl || personPlaceholder}
-                className="post-profile-img rounded-full"
+                className="post-profile-img rounded-full ignore"
                 alt=""
               />
-              <p className="text-base">{notification.content}</p>
+              <p className="text-base ignore">{notification.content}</p>
               <p className="mt-2 text-sm text-slate-500">{notification.post?.content}</p>
             </div>
           </div>
