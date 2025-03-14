@@ -238,10 +238,10 @@ export default function Post() {
   return (
     <div>
       <div
-        className="flex items-center gap-4 border-b pl-3 py-3 sticky-header"
+        className="flex items-center gap-4 border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] pl-3 py-3 sticky-header"
         ref={stickyRef}
       >
-        <div className="hover:bg-slate-300 rounded-full p-1">
+        <div className="hover:bg-slate-300 dark:hover:bg-gray-800 rounded-full p-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -281,7 +281,7 @@ export default function Post() {
               {post.repostUser.name} reposted
             </p>
           ) : null}
-          <div className="w-full border-b pb-3 px-3">
+          <div className="w-full border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] pb-3 px-3">
             <div className="mb-3">
               <div className="flex justify-between">
                 <div className="flex gap-2">
@@ -328,7 +328,7 @@ export default function Post() {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="size-6 hover:bg-slate-100 rounded-full cursor-pointer"
+                      className="size-6 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-full cursor-pointer"
                       onClick={() => setComponentVisible(!isComponentVisible)}
                     >
                       <path
@@ -341,7 +341,7 @@ export default function Post() {
                   {isComponentVisible ? (
                     <div
                       ref={dropRef}
-                      className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1 rounded-lg"
+                      className="w-32 cursor-pointer flex border border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] gap-2 pl-2 pr-4 py-1 rounded-lg"
                       style={{ position: "absolute", left: -100 }}
                       onClick={() => deletePost(post)}
                     >
@@ -372,7 +372,7 @@ export default function Post() {
                 {post.createdAtFormatted}
               </p>
             </div>
-            <div className="flex justify-between border-t pt-3">
+            <div className="flex justify-between border-t border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] pt-3">
               <div className="icon-value">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -451,7 +451,7 @@ export default function Post() {
               </div>
             </div>
           </div>
-          <form onSubmit={createReply} className="border-b-2 px-3">
+          <form onSubmit={createReply} className="border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-3">
             <div className="w-full flex pt-2">
               <img
                 src={user?.profileImgUrl ?? profilePlaceholder}

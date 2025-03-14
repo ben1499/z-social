@@ -292,7 +292,7 @@ export default function Profile() {
               className="flex items-center gap-4 py-1 pl-3 z-10 sticky-header"
               ref={stickyRef}
             >
-              <div className="hover:bg-slate-300 rounded-full p-1">
+              <div className="hover:bg-slate-300 dark:hover:bg-gray-800 rounded-full p-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -319,7 +319,7 @@ export default function Profile() {
             <div className="relative">
               <img className="cover-bg" src={user?.coverImgUrl} alt="" />
               <img
-                className="profile-img"
+                className="profile-img border-4 border-white dark:border-black"
                 src={user.profileImgUrl || profilePlaceholder}
                 alt=""
               />
@@ -327,14 +327,14 @@ export default function Profile() {
             <div className="mt-[70px] pl-3 relative">
               {user?.isCurrentUser ? (
                 <button
-                  className="edit-profile-btn !rounded-full !px-4 !py-1"
+                  className="edit-profile-btn text-black dark:text-white border !border-[rgb(185,202,211)] dark:!border-[rgb(83,100,113)] dark:hover:bg-gray-800 !rounded-full !px-4 !py-1"
                   onClick={showModal}
                 >
                   Edit Profile
                 </button>
               ) : user?.isFollowing ? (
                 <button
-                  className="!rounded-full !px-4 !py-1 edit-profile-btn"
+                  className="!rounded-full !px-4 !py-1 edit-profile-btn text-black dark:text-white border !border-[rgb(185,202,211)] dark:!border-[rgb(83,100,113)"
                   onClick={toggleFollow}
                 >
                   Following
@@ -383,13 +383,13 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-            <div className="flex *:flex-1 mt-3 *:cursor-pointer *:flex *:flex-col *:items-center border-b tabs">
+            <div className="flex *:flex-1 mt-3 *:cursor-pointer *:flex *:flex-col *:items-center border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] tabs">
               {tabs.map((tab) => (
                 <div
                   className={
                     selectedTab === tab.id
-                      ? "hover:bg-slate-100 py-3 relative active"
-                      : "hover:bg-slate-100 py-3 relative"
+                      ? "hover:bg-slate-100 hover:dark:bg-gray-800 py-3 relative active"
+                      : "hover:bg-slate-100 hover:dark:bg-gray-800 py-3 relative"
                   }
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
@@ -432,14 +432,14 @@ export default function Profile() {
       >
         <div className="flex justify-between items-center px-2 py-2">
           <div className="flex gap-4">
-            <div className="icon-value">
+            <div className="hover:bg-slate-300 dark:hover:bg-gray-800 rounded-full p-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6 rounded-full"
+                className="size-5 rounded-full"
                 onClick={closeModal}
               >
                 <path

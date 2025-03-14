@@ -95,21 +95,37 @@ export default function Explore() {
   const goToProfile = (user, e) => {
     if (e.target.classList.contains("ignore")) return;
     navigate(`/${user.username}`, { state: { from: location } });
-  }
+  };
 
   return (
     <div className="mt-2">
-      <div className="mx-3">
+      <div className="mx-3 relative">
         <input
           type="text"
-          className="border-2 rounded-full w-full px-2 py-1"
+          className="pl-10 border border-slate-300 dark:border-[rgb(51,54,57)] rounded-full w-full px-2 py-1 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
           placeholder="Search users or posts"
           value={searchInput}
           onInput={handleSearch}
         />
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
+          </svg>
+        </div>
       </div>
       {suggestedUsers.length ? (
-        <div className="mt-4 mb-2 border-b">
+        <div className="mt-4 mb-2 border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)]">
           <p className="font-bold text-2xl px-3">
             {searchInput ? "Users" : "Who to follow"}
           </p>
@@ -127,7 +143,9 @@ export default function Explore() {
                     alt=""
                   />
                   <div>
-                    <p className="hover:underline leading-5 font-semibold">{user.name}</p>
+                    <p className="hover:underline leading-5 font-semibold">
+                      {user.name}
+                    </p>
                     <p className="text-sm text-slate-600">@{user.username}</p>
                     <p className="text-[15px] mt-[3px]">{user.bio}</p>
                   </div>

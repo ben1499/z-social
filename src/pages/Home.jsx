@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Feed from "../components/Feed";
 import axiosInst from "../config/axios";
 import { useOutletContext } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useWatchEffect from "../hooks/useWatchEffect";
+import useComponentVisible from "../hooks/useComponentVisible";
+import ThemeContext from "../contexts/ThemeContext";
 
 const url = import.meta.env.VITE_API_URL;
 
 function Home() {
   const [posts, setPosts] = useState([]);
-  const [isPickerVisible, setPickerVisible] = useState(false);
   const { user, triggerPostsFetch } = useOutletContext();
   const [contentInput, setContentInput] = useState("");
 
@@ -21,6 +22,15 @@ function Home() {
   const [wordCount, setWordCount] = useState(0);
 
   const [createLoading, setCreateLoading] = useState(false);
+
+  const { isDarkMode } = useContext(ThemeContext);
+
+  const {
+    triggerRef,
+    dropRef,
+    isComponentVisible: isPickerVisible,
+    setComponentVisible: setPickerVisible,
+  } = useComponentVisible();
 
   useEffect(() => {
     axiosInst
@@ -128,12 +138,12 @@ function Home() {
 
   return (
     <div>
-      <div className="border-b border-slate-300">
+      <div className="border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)]">
         <form onSubmit={createPost}>
           <div className="w-full flex px-2 pt-2">
             <img
               src={user?.profileImgUrl ?? personPlaceholder}
-              className="post-profile-img rounded-full border-slate-50 border-2"
+              className="post-profile-img rounded-full border-slate-50 dark:border-black border-2"
               alt=""
             />
             <div className="grow-wrap" data-replicated-value={contentInput}>
@@ -190,12 +200,15 @@ function Home() {
                 onChange={handleImageUpload}
               />
               {isPickerVisible ? (
-                <EmojiPicker
-                  style={{ position: "absolute", top: 25 }}
-                  onEmojiClick={handleEmojiClick}
-                />
+                <div ref={dropRef} style={{ position: "absolute", top: 25, zIndex: 5 }}>
+                  <EmojiPicker
+                    theme={isDarkMode ? "dark" : "light"}
+                    onEmojiClick={handleEmojiClick}
+                  />
+                </div>
               ) : null}
               <svg
+                ref={triggerRef}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

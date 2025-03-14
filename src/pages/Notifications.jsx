@@ -13,10 +13,10 @@ export default function Notifications() {
 
   return (
     <div>
-      <p className="font-bold text-xl border-b p-2">Notifications</p>
+      <p className="font-bold text-xl border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] p-2">Notifications</p>
       <div>
         {notifications.map((notification) => (
-          <div key={notification.id} className="flex gap-3 notification-item border-b px-2 py-3">
+          <div key={notification.id} className="flex gap-3 notification-item border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3">
             {notification.type === "LIKE" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

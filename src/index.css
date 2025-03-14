@@ -2,19 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: XCompany;
+  src: url(assets/XCompany-Regular.ttf);
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
-  color: #000;
-  background-color: rgb(255, 255, 255);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root.light-theme {
+  --bg: #fff;
+  --color: #000;
+  --btn-bg: rgb(15, 20, 25);
+  --btn-color: #fff;
+  --btn-bg-hover: rgb(39, 44, 48);
+  --list-item-hover-bg: rgb(15, 20, 25, 0.1);
+  --border-color: rgb(185, 202, 211);
+  --bg-hover: rgb(0, 0, 0, 0.03);
+  --sticky-header-bg: #fff;
+  --sticky-header-pinned-bg: rgba(255, 255, 255, 0.5);
+  --outline-color: rgb(185, 202, 211);
+}
+
+:root.dark-theme {
+  --bg: #000;
+  --color: #fff;
+  --btn-bg: #fff;
+  --btn-color: #000;
+  --btn-bg-hover:rgb(215, 219, 220);
+  --list-item-hover-bg: rgb(24, 24, 24);
+  --border-color: rgb(47, 51, 54);
+  --bg-hover: rgb(255, 255, 255, 0.06);
+  --sticky-header-bg: #000;
+  --sticky-header-pinned-bg: rgba(0, 0, 0, 0.5);
+  --outline-color: rgb(71, 77, 82);
+}
+
+:root:not(.dark-theme) {
+  color: var(--color);
+  background-color: var(--bg);
+}
+
+:root:not(.light-theme) {
+  color: var(--color);
+  background-color: var(--bg);
+}
+
+input {
+  color: var(--color);
+  background-color: var(--bg);
 }
 
 a {
@@ -55,13 +99,13 @@ button:not(.epr-btn) {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: rgb(15, 20, 25);
-  color: #fff;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover:not(.epr-btn):not(:disabled) {
-  background-color: rgb(39, 44, 48);
+  background-color: var(--btn-bg-hover);
 }
 button:focus,
 button:focus-visible {
@@ -88,7 +132,7 @@ button:focus-visible {
   align-items: center;
   gap: 14px;
   padding: 10px 20px;
-  border-radius: 16px;
+  border-radius: 26px;
   cursor: pointer;
   font-size: 1.3rem;
 }
@@ -100,12 +144,12 @@ button:focus-visible {
 }
 
 .sidebar-list > li:hover {
-  background-color: aliceblue;
+  background-color: var(--list-item-hover-bg);
 }
 
 .center-section {
-  border-left: 1px solid rgb(185, 202, 211);
-  border-right: 1px solid rgb(185, 202, 211);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .feed {
@@ -124,6 +168,7 @@ button:focus-visible {
 
 .suggestion-box {
   width: 350px;
+  border: 1px solid var(--border-color);
 }
 
 .divide-border {
@@ -132,7 +177,7 @@ button:focus-visible {
 
 button:disabled {
   cursor: not-allowed;
-  background-color: #000;
+  background-color: var(--color);
   opacity: 0.6;
 }
 
@@ -185,7 +230,7 @@ button:disabled {
 }
 
 .icon-value > svg:hover {
-  background-color: rgb(0, 0, 0, 0.1);
+  background-color: var(--bg-hover);
   border-radius: 50%;
 }
 
@@ -233,10 +278,11 @@ button:disabled {
 
 .feed-post {
   cursor: pointer;
+  border-color: var(--border-color);
 }
 
 .feed-post:hover {
-  background-color: rgb(0, 0, 0, 0.03);
+  background-color: var(--bg-hover);
 }
 
 .cover-bg {
@@ -249,7 +295,6 @@ button:disabled {
   border-radius: 50%;
   height: 120px;
   width: 120px;
-  border: 4px solid #fff;
   position: absolute;
   top: 110px;
   left: 10px;
@@ -260,13 +305,12 @@ button:disabled {
   position: absolute;
   right: 12px;
   top: -55px;
-  background-color: inherit !important;
-  border: 1px solid rgb(207, 217, 222) !important;
-  color: #000 !important;
+  background-color: var(--bg) !important;
+  color: var(--color) !important;
 }
 
 .edit-profile-btn:hover {
-  background-color: rgb(15, 20, 25, 0.1) !important;
+  background-color: var(--bg-hover) !important;
 }
 
 .edit-profile-btn:focus,
@@ -293,14 +337,14 @@ button:disabled {
 }
 
 .sticky-header {
-  background-color: white;
+  background-color: var(--sticky-header-bg);
   position: sticky;
   top: -1px;
 }
 
 /* styles for when the header is in sticky mode */
 .sticky-header.is-pinned {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: var(--sticky-header-pinned-bg);
   backdrop-filter: blur(10px);
 }
 
@@ -337,7 +381,7 @@ button:disabled {
 }
 
 .label-field > input {
-  outline: 1px solid rgb(207, 217, 222);
+  outline: 1px solid var(--outline-color);
   padding: 0 8px;
   padding-left: 10px;
   padding-top: 20px;
@@ -377,7 +421,7 @@ button:disabled {
 }
 
 .label-field > textarea {
-  outline: 1px solid rgb(207, 217, 222);
+  outline: 1px solid var(--outline-color);
   padding: 0 8px;
   padding-left: 10px;
   padding-top: 20px;
@@ -385,61 +429,11 @@ button:disabled {
   resize: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #fff;
-    background-color: #000;
-  }
+textarea {
+  background-color: var(--bg);
+}
 
-  input {
-    color: #000;
-  }
-
-  .ReactModal__Content--after-open {
-    color: #fff !important;
-    background-color: #000 !important;
-  }
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #fff;
-    color: #000;
-  }
-
-  button:hover {
-    background-color: rgb(215, 219, 220);
-  }
-
-  button:disabled {
-    cursor: not-allowed;
-    background-color: #fff;
-    opacity: 0.6;
-  }
-
-  .icon-value > svg:hover {
-    background-color: rgb(255, 255, 255, 0.3);
-    border-radius: 50%;
-  }
-
-  .sticky-header {
-    background-color: black;
-  }
-
-  .sticky-header.is-pinned {
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  .profile-img {
-    border: 4px solid #000;
-  }
-
-  .edit-profile-btn {
-    color: unset !important;
-  }
-  
-  .label-field > input {
-    color: #fff;
-  }
+.ReactModal__Content--after-open {
+  color: var(--color) !important;
+  background-color: var(--bg) !important;
 }

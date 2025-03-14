@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
@@ -7,6 +7,7 @@ import Modal from "react-modal";
 import EmojiPicker from "emoji-picker-react";
 import UserSearch from "./UserSearch";
 import { useSnackbar } from "react-simple-snackbar";
+import ThemeContext from "../contexts/ThemeContext";
 
 const customStyles = {
   content: {
@@ -25,16 +26,16 @@ const customStyles = {
 };
 
 const options = {
-  position: 'bottom-left',
+  position: "bottom-left",
   closeStyle: {
     backgroundColor: "inherit",
     padding: "5px",
 
     "&:hover": {
-      opacity: 0.5
-    }
+      opacity: 0.5,
+    },
   },
-}
+};
 
 function Layout() {
   const [user, setUser] = useState(null);
@@ -43,7 +44,7 @@ function Layout() {
 
   // Post creation state
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [isPickerVisible, setPickerVisible] = useState(false);
+  // const [isPickerVisible, setPickerVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -52,8 +53,17 @@ function Layout() {
   const [wordCount, setWordCount] = useState(0);
   const [triggerPostsFetch, setTriggerPostsFetch] = useState(0);
 
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+
   const { triggerRef, dropRef, isComponentVisible, setComponentVisible } =
     useComponentVisible();
+
+  const {
+    triggerRef: pickerTriggerRef,
+    dropRef: pickerDropRef,
+    isComponentVisible: isPickerVisible,
+    setComponentVisible: setPickerVisible,
+  } = useComponentVisible();
 
   const [openSnackbar] = useSnackbar(options);
   const openSnackbarRef = useRef();
@@ -68,24 +78,30 @@ function Layout() {
   }, [openSnackbar]);
 
   useEffect(() => {
-    axiosInst.get("/users/profile").then((res) => {
-      setUser(res.data.data);
-    }).catch((err) => {
-      console.log(err);
-      if (!err.response || err.response.status !== 400) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user_id");
-        openSnackbarRef.current("Something went wrong. Please try again.", 2500);
-        return navigate("/login");
-      }
+    axiosInst
+      .get("/users/profile")
+      .then((res) => {
+        setUser(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (!err.response || err.response.status !== 400) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          openSnackbarRef.current(
+            "Something went wrong. Please try again.",
+            2500
+          );
+          return navigate("/login");
+        }
 
-      if (err.response.status === 401 || err.response.status === 403) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user_id");
-        openSnackbarRef.current("Please login to your account", 2500);
-        return navigate("/login");
-      }
-    })
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user_id");
+          openSnackbarRef.current("Please login to your account", 2500);
+          return navigate("/login");
+        }
+      });
 
     axiosInst
       .get("/users", {
@@ -240,7 +256,7 @@ function Layout() {
   const goToProfile = (user, e) => {
     if (e.target.classList.contains("ignore")) return;
     navigate(`/${user.username}`, { state: { from: location } });
-  }
+  };
 
   return (
     <div className="flex">
@@ -252,7 +268,13 @@ function Layout() {
               <Link to="/home" className="!w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={location.pathname === "/home" ? "black" : "none"}
+                  fill={
+                    location.pathname === "/home"
+                      ? isDarkMode
+                        ? "white"
+                        : "black"
+                      : "none"
+                  }
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
@@ -275,7 +297,13 @@ function Layout() {
               <Link to="/explore" className="!w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={location.pathname === "/explore" ? "black" : "none"}
+                  fill={
+                    location.pathname === "/explore"
+                      ? isDarkMode
+                        ? "white"
+                        : "black"
+                      : "none"
+                  }
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
@@ -301,7 +329,9 @@ function Layout() {
                     xmlns="http://www.w3.org/2000/svg"
                     fill={
                       location.pathname === "/notifications"
-                        ? "black"
+                        ? isDarkMode
+                          ? "white"
+                          : "black"
                         : "none"
                     }
                     viewBox="0 0 24 24"
@@ -328,7 +358,13 @@ function Layout() {
               <Link to="/bookmarks" className="!w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={location.pathname === "/bookmarks" ? "black" : "none"}
+                  fill={
+                    location.pathname === "/bookmarks"
+                      ? isDarkMode
+                        ? "white"
+                        : "black"
+                      : "none"
+                  }
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
@@ -349,7 +385,9 @@ function Layout() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill={
                     location.pathname === `/${user?.username}`
-                      ? "black"
+                      ? isDarkMode
+                        ? "white"
+                        : "black"
                       : "none"
                   }
                   viewBox="0 0 24 24"
@@ -389,48 +427,57 @@ function Layout() {
           </ul>
           {user && isComponentVisible && (
             <ul
-              className="absolute left-[0.6rem] bottom-[6.5rem] bg-white py-2 rounded-md drop-shadow-md z-10"
+              className="absolute left-[0.6rem] bottom-[6.5rem] bg-white dark:bg-gray-900 py-2 rounded-md drop-shadow-md z-10"
               ref={dropRef}
             >
-              <li className="hover:bg-slate-100 py-3 px-4 cursor-pointer flex gap-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
+              {isDarkMode ? (
+                <li
+                  className="hover:bg-slate-100 hover:dark:bg-gray-700 py-3 px-4 cursor-pointer flex gap-3"
+                  onClick={toggleTheme}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-                  />
-                </svg>
-                Switch to dark mode
-              </li>
-              <li className="hover:bg-slate-100 py-3 px-4 cursor-pointer flex gap-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+                    />
+                  </svg>
+                  Switch to light mode
+                </li>
+              ) : (
+                <li
+                  className="hover:bg-slate-100 hover:dark:bg-gray-700 py-3 px-4 cursor-pointer flex gap-3"
+                  onClick={toggleTheme}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-                  />
-                </svg>
-                Switch to light mode
-              </li>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+                    />
+                  </svg>
+                  Switch to dark mode
+                </li>
+              )}
             </ul>
           )}
         </div>
         {user ? (
-          <div className="flex items-center justify-between relative mt-auto mb-6 hover:bg-[rgb(15,20,25,0.1)] rounded-full py-3 px-2 w-[120%] transition-colors">
+          <div className="flex items-center justify-between relative mt-auto mb-6 hover:bg-[rgb(15,20,25,0.1)] hover:dark:bg-gray-900 rounded-full py-3 px-2 w-[120%] transition-colors">
             <div className="flex gap-2">
               <Link to={`/${user.username}`} state={{ from: location }}>
                 <img
@@ -447,7 +494,7 @@ function Layout() {
                 >
                   <p>{user.name}</p>
                 </Link>
-                <p className="text-slate-600 text-sm cursor-pointer">
+                <p className="text-zinc-600 text-sm cursor-pointer">
                   <Link to={`/${user.username}`} state={{ from: location }}>
                     @{user.username}
                   </Link>
@@ -478,12 +525,12 @@ function Layout() {
       </div>
       <div className="right-bar">
         <UserSearch />
-        <div className="border-2 pt-4 pb-2 mt-6 rounded-xl suggestion-box">
+        <div className="pt-4 pb-2 mt-6 rounded-xl suggestion-box">
           <p className="font-bold mb-5 text-xl px-3">You might like</p>
           <div>
             {suggestedUsers.map((user) => (
               <div
-                className="flex justify-between items-center cursor-pointer px-3 py-2 hover:bg-[rgb(0,0,0,0.03)]"
+                className="flex justify-between items-center cursor-pointer px-3 py-2 hover:bg-[rgb(0,0,0,0.03)] dark:hover:bg-[rgb(255,255,255,0.08)]"
                 key={user.id}
                 onClick={(e) => goToProfile(user, e)}
               >
@@ -517,7 +564,7 @@ function Layout() {
         contentLabel="Create Post"
         bodyOpenClassName="modal-open"
       >
-        <div className="rounded-full hover:bg-slate-300 cursor-pointer w-fit p-1 mb-2">
+        <div className="rounded-full hover:bg-slate-300 hover:dark:bg-gray-700 cursor-pointer w-fit p-1 mb-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -538,7 +585,7 @@ function Layout() {
           <div className="w-full flex px-2 pt-2">
             <img
               src={user?.profileImgUrl ?? personPlaceholder}
-              className="post-profile-img rounded-full border-slate-50 border-2"
+              className="post-profile-img rounded-full border-slate-50 dark:border-black border-2"
               alt=""
             />
             <div className="grow-wrap" data-replicated-value={contentInput}>
@@ -569,7 +616,7 @@ function Layout() {
               ></div>
             </div>
           ) : null}
-          <div className="flex justify-between items-center pb-4 px-1 border-b-2">
+          <div className="flex justify-between items-center pb-4 px-1 border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)]">
             <div className="flex items-center gap-2 pl-2 relative">
               <label htmlFor="image1" className="cursor-pointer">
                 <svg
@@ -595,12 +642,15 @@ function Layout() {
                 onChange={handleImageUpload}
               />
               {isPickerVisible ? (
-                <EmojiPicker
-                  style={{ position: "absolute", top: 25 }}
-                  onEmojiClick={handleEmojiClick}
-                />
+                <div ref={pickerDropRef} style={{ position: "absolute", top: 25 }}>
+                  <EmojiPicker
+                    theme={isDarkMode ? "dark" : "light"}
+                    onEmojiClick={handleEmojiClick}
+                  />
+                </div>
               ) : null}
               <svg
+                ref={pickerTriggerRef}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

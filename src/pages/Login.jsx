@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from "react";
-import ZLogoBlack from "../assets/z-logo-black.png";
+import { useEffect, useState, useRef, useContext } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ThemeContext from "../contexts/ThemeContext";
 
 Modal.setAppElement("#root");
 
@@ -17,17 +17,19 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     paddingLeft: "25px",
     paddingRight: "25px",
+    borderRadius: "20px"
   },
 };
 
 const url = import.meta.env.VITE_API_URL;
 
 function Login() {
-  const [isDarkTheme, setDarkTheme] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [createErrors, setCreateErrors] = useState(null);
   const [loginErrors, setLoginErrors] = useState(null);
   const [isLoading, setLoading] = useState(false);
+
+  const { isDarkMode } = useContext(ThemeContext);
 
   const createForm = useRef();
   const loginForm = useRef();
@@ -47,8 +49,6 @@ function Login() {
   });
 
   useEffect(() => {
-    setDarkTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-
     if (localStorage.getItem("token")) {
       navigate("/home");
     }
@@ -153,7 +153,7 @@ function Login() {
   return (
     <div className="h-screen flex justify-center items-center gap-44">
       <div>
-        <img src={ZLogoBlack} alt="" style={{ height: "250px" }} />
+        <h1 className="font-[XCompany] text-[27rem]">Z</h1>
       </div>
       <div>
         <h1 className="mb-8 text-7xl font-semibold">Happening now</h1>
@@ -163,7 +163,7 @@ function Login() {
             <div>
               <label htmlFor="">Email</label>
               <input
-                className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                className="w-full block border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="xyz@gmail.com"
                 name="email"
                 type="email"
@@ -177,7 +177,7 @@ function Login() {
             <div className="mt-3">
               <label htmlFor="">Password</label>
               <input
-                className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                className="w-full block border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="********"
                 name="password"
                 type="password"
@@ -225,7 +225,7 @@ function Login() {
                 onClick={handleTwitterLogin}
               >
                 <svg
-                  fill={isDarkTheme ? "" : "white"}
+                  fill={isDarkMode ? "black" : "white"}
                   style={{ width: "30px", height: "25px" }}
                   aria-hidden="true"
                 >
@@ -237,7 +237,7 @@ function Login() {
               </button>
               <p className="text-center">
                 Don{"'"}t have an account?{" "}
-                <a className="cursor-pointer" onClick={() => setIsOpen(true)}>
+                <a className="!cursor-pointer !text-blue-500 hover:!underline" onClick={() => setIsOpen(true)}>
                   Create account
                 </a>
               </p>
@@ -257,11 +257,12 @@ function Login() {
           <div>
             <label htmlFor="">Username</label>
             <input
-              className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              className="w-full block bg-white dark:bg-black border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Username"
               type="text"
               name="username"
               required
+              autoComplete="off"
               onChange={handleCreateModelChange}
             />
             <p className="text-red-500 text-sm italic">
@@ -271,7 +272,7 @@ function Login() {
           <div className="mt-3">
             <label htmlFor="">Name</label>
             <input
-              className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              className="w-full block bg-white dark:bg-black border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="John Doe"
               type="text"
               name="name"
@@ -285,11 +286,12 @@ function Login() {
           <div className="mt-3">
             <label htmlFor="">Email</label>
             <input
-              className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              className="w-full block bg-white dark:bg-black border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="xyz@gmail.com"
               type="email"
               name="email"
               required
+              autoComplete="off"
               onChange={handleCreateModelChange}
             />
             <p className="text-red-500 text-sm italic">
@@ -299,12 +301,15 @@ function Login() {
           <div className="mt-3">
             <label htmlFor="">Password</label>
             <input
-              className="w-full block bg-white border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              className="w-full block bg-white dark:bg-black border border-slate-300 dark:border-[rgb(51,54,57)] rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="********"
               type="password"
               name="password"
               required
               onChange={handleCreateModelChange}
+              autoComplete="new-password"
+              spellCheck="false"
+              autoCorrect="false"
             />
             <p className="text-red-500 text-sm italic">
               {createPasswordError ? createPasswordError.msg : null}
@@ -312,14 +317,14 @@ function Login() {
           </div>
           <div className="flex justify-end mt-7 gap-4">
             <button
-              className="py-1 px-3 rounded"
+              className="!py-1 !px-3 !rounded-lg"
               disabled={isLoading}
               onClick={closeModal}
             >
               Cancel
             </button>
             <button
-              className="py-1 px-3 rounded flex justify-center"
+              className="!py-1 !px-3 !rounded-lg flex justify-center"
               onClick={submitCreateForm}
             >
               {isLoading ? (

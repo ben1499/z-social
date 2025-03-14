@@ -207,7 +207,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
         posts.map((post) => (
           <div
             key={post.keyId}
-            className="border-slate-200 border-b-2 py-2 px-3 feed-post transition-colors"
+            className="border-b py-2 px-3 feed-post transition-colors"
             onClick={(e) => goToPost(e, post)}
           >
             {post.isRepost ? (
@@ -236,7 +236,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                     ? post.user.profileImgUrl
                     : profilePlaceholder
                 }
-                className="post-profile-img rounded-full border-slate-50 border-2 hover:brightness-[0.9] profile-link"
+                className="post-profile-img rounded-full border-slate-50 dark:border-black border-2 hover:brightness-[0.9] profile-link"
                 alt=""
               />
               <div className="w-full">
@@ -265,7 +265,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
-                          className="size-6"
+                          className="size-6 rounded-full hover:bg-slate-200 dark:hover:bg-gray-800"
                           onClick={() => showDropdown(post.keyId)}
                         >
                           <path
@@ -277,7 +277,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                       ) : null}
                       {post.keyId === dropdownVisibleId ? (
                         <div
-                          className="w-32 cursor-pointer flex border-slate-200 border-2 gap-2 pl-2 pr-4 py-1 ignore"
+                          className="w-32 cursor-pointer flex border-slate-200 dark:border-gray-600 rounded-lg border gap-2 pl-2 pr-4 py-1 ignore"
                           style={{ position: "absolute", left: -100 }}
                           onClick={() => deletePost(post)}
                         >
