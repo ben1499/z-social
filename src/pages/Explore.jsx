@@ -146,7 +146,7 @@ export default function Explore() {
                     <p className="hover:underline leading-5 font-semibold">
                       {user.name}
                     </p>
-                    <p className="text-sm text-slate-600">@{user.username}</p>
+                    <p className="text-sm text-slate-600 dark:text-gray-500">@{user.username}</p>
                     <p className="text-[15px] mt-[3px]">{user.bio}</p>
                   </div>
                 </div>

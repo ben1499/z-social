@@ -7,8 +7,22 @@ import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useWatchEffect from "../hooks/useWatchEffect";
 import useComponentVisible from "../hooks/useComponentVisible";
 import ThemeContext from "../contexts/ThemeContext";
+import { useSnackbar } from "react-simple-snackbar";
 
 const url = import.meta.env.VITE_API_URL;
+
+const options = {
+  position: "bottom-left",
+  closeStyle: {
+    backgroundColor: "inherit",
+    color: "inherit",
+    padding: "5px",
+
+    "&:hover": {
+      opacity: 0.5,
+    },
+  },
+};
 
 function Home() {
   const [posts, setPosts] = useState([]);
@@ -25,6 +39,8 @@ function Home() {
   const [isLoading, setLoading] = useState(false);
 
   const { isDarkMode } = useContext(ThemeContext);
+
+  const [openSnackbar] = useSnackbar(options);
 
   const {
     triggerRef,
@@ -67,6 +83,11 @@ function Home() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 1000000) {
+      openSnackbar("File size must be less than 1 MB", 2500);
+      return;
+    }
     const formData = new FormData();
     formData.append("image", file);
     setUploadLoading(true);
@@ -77,7 +98,6 @@ function Home() {
     axiosInst
       .post("/images", formData)
       .then((res) => {
-        console.log(res);
         setUploadImage(res.data.url);
         setImageProgress(100);
       })
@@ -92,7 +112,6 @@ function Home() {
 
   const removeImage = () => {
     const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
-    console.log(image_id);
     axiosInst
       .delete("/images/", {
         params: {

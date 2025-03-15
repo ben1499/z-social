@@ -211,7 +211,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
             onClick={(e) => goToPost(e, post)}
           >
             {post.isRepost ? (
-              <p className="text-slate-500 ml-6 flex gap-2 items-center text-sm font-semibold">
+              <p className="text-slate-500 dark:text-gray-500 ml-6 flex gap-2 items-center text-sm font-semibold">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -246,10 +246,10 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                       <span className="font-bold hover:underline decoration-from-font profile-link">
                         {post.user.name}
                       </span>{" "}
-                      <span className="text-slate-600 profile-link">
+                      <span className="text-slate-600 dark:text-gray-500 profile-link">
                         @{post.user.username}
                       </span>
-                      <span className="text-slate-600 ml-1">
+                      <span className="text-slate-600 dark:text-gray-500 ml-1">
                         ·{" "}
                         {getRelativeTime(
                           post.createdAt,

@@ -4,6 +4,7 @@ import axiosInst from "../config/axios";
 import Feed from "../components/Feed";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import Modal from "react-modal";
+import { useSnackbar } from "react-simple-snackbar";
 
 const customStyles = {
   content: {
@@ -17,6 +18,19 @@ const customStyles = {
     borderRadius: "20px",
     padding: 0,
     paddingBottom: "30px",
+  },
+};
+
+const options = {
+  position: "bottom-left",
+  closeStyle: {
+    backgroundColor: "inherit",
+    color: "inherit",
+    padding: "5px",
+
+    "&:hover": {
+      opacity: 0.5,
+    },
   },
 };
 
@@ -64,6 +78,9 @@ export default function Profile() {
   const editForm = useRef();
 
   const createNameError = createErrors?.find((error) => error.path === "name");
+
+  const [openSnackbar] = useSnackbar(options);
+  
 
   useEffect(() => {
     // timeout to wait for the element to be mounted
@@ -215,7 +232,7 @@ export default function Profile() {
   const showModal = () => {
     setEditModel({
       name: user.name,
-      bio: user.bio,
+      bio: user.bio ?? "",
       profileImgUrl: user.profileImgUrl,
       coverImgUrl: user.coverImgUrl,
     });
@@ -224,6 +241,11 @@ export default function Profile() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 1000000) {
+      openSnackbar("File size must be less than 1 MB", 2500);
+      return;
+    }
     const formData = new FormData();
     formData.append("image", file);
     setLoading(true);

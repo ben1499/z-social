@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState, useRef, useContext, useCallback } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     paddingLeft: "25px",
     paddingRight: "25px",
-    borderRadius: "20px"
+    borderRadius: "20px",
   },
 };
 
@@ -47,6 +47,8 @@ function Login() {
     email: "",
     password: "",
   });
+
+  const [triggerDemoLogin, setTriggerDemoLogin] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -118,8 +120,9 @@ function Login() {
     (error) => error.path === "password"
   );
 
-  const submitLoginForm = (e) => {
-    e.preventDefault();
+  const submitLoginForm = useCallback((e) => {
+    if (e)
+      e.preventDefault();
     const isValid = loginForm.current.reportValidity();
     if (isValid) {
       setLoading(true);
@@ -138,7 +141,19 @@ function Login() {
         })
         .finally(() => setLoading(false));
     }
-  };
+  }, [loginModel, navigate]);
+
+  const loginDemo = () => {
+    setLoginModel({ email: "johndoe@gmail.com", password: "doe@gmail.com" });
+    setTriggerDemoLogin(true);
+  }
+
+  useEffect(() => {
+    if (triggerDemoLogin) {
+      submitLoginForm(); 
+      setTriggerDemoLogin(false); 
+    }
+  }, [triggerDemoLogin, submitLoginForm]);
 
   const handleTwitterLogin = () => {
     window.location.href = `${url}/auth/twitter`;
@@ -167,6 +182,7 @@ function Login() {
                 placeholder="xyz@gmail.com"
                 name="email"
                 type="email"
+                value={loginModel.email}
                 required
                 onChange={handleLoginModelChange}
               />
@@ -181,6 +197,7 @@ function Login() {
                 placeholder="********"
                 name="password"
                 type="password"
+                value={loginModel.password}
                 required
                 onChange={handleLoginModelChange}
               />
@@ -213,6 +230,9 @@ function Login() {
                 ) : null}
                 Sign in
               </button>
+              <button type="button" className="w-full py-2 flex justify-center mt-3" disabled={isLoading} onClick={loginDemo}>
+                Sign in to Demo Account
+              </button>
               <div className="flex items-center gap-4 my-1">
                 <div className="divide-border grow"></div>
                 <div>or</div>
@@ -237,7 +257,10 @@ function Login() {
               </button>
               <p className="text-center">
                 Don{"'"}t have an account?{" "}
-                <a className="!cursor-pointer !text-blue-500 hover:!underline" onClick={() => setIsOpen(true)}>
+                <a
+                  className="!cursor-pointer !text-blue-500 hover:!underline"
+                  onClick={() => setIsOpen(true)}
+                >
                   Create account
                 </a>
               </p>

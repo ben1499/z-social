@@ -29,6 +29,7 @@ const options = {
   position: "bottom-left",
   closeStyle: {
     backgroundColor: "inherit",
+    color: "inherit",
     padding: "5px",
 
     "&:hover": {
@@ -133,6 +134,11 @@ function Layout() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 1000000) {
+      openSnackbar("File size must be less than 1 MB", 2500);
+      return;
+    }
     const formData = new FormData();
     formData.append("image", file);
     setUploadLoading(true);
@@ -542,7 +548,7 @@ function Layout() {
                   />
                   <div>
                     <p className="hover:underline font-medium">{user.name}</p>
-                    <p className="text-slate-600 text-sm">@{user.username}</p>
+                    <p className="text-slate-600 dark:text-gray-500 text-sm">@{user.username}</p>
                   </div>
                 </div>
                 <button
