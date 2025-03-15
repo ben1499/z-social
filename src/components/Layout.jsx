@@ -262,7 +262,7 @@ function Layout() {
     <div className="flex">
       <div className="sidebar absolute">
         <div>
-          <p className="text-4xl ml-6 mt-2 font-semibold">ℤ</p>
+          <p className="text-4xl ml-6 mt-2 font-bold">ℤ</p>
           <ul className="sidebar-list">
             <li>
               <Link to="/home" className="!w-full">

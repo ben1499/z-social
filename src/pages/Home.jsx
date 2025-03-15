@@ -22,6 +22,7 @@ function Home() {
   const [wordCount, setWordCount] = useState(0);
 
   const [createLoading, setCreateLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const { isDarkMode } = useContext(ThemeContext);
 
@@ -32,20 +33,8 @@ function Home() {
     setComponentVisible: setPickerVisible,
   } = useComponentVisible();
 
-  useEffect(() => {
-    axiosInst
-      .get(`${url}/posts`, {
-        params: {
-          is_explore: false,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setPosts(res.data.data);
-      });
-  }, []);
-
   const getPosts = () => {
+    setLoading(true);
     axiosInst
       .get(`${url}/posts`, {
         params: {
@@ -54,8 +43,14 @@ function Home() {
       })
       .then((res) => {
         setPosts(res.data.data);
-      });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   useWatchEffect(() => {
     getPosts();
@@ -200,7 +195,10 @@ function Home() {
                 onChange={handleImageUpload}
               />
               {isPickerVisible ? (
-                <div ref={dropRef} style={{ position: "absolute", top: 25, zIndex: 5 }}>
+                <div
+                  ref={dropRef}
+                  style={{ position: "absolute", top: 25, zIndex: 5 }}
+                >
                   <EmojiPicker
                     theme={isDarkMode ? "dark" : "light"}
                     onEmojiClick={handleEmojiClick}
@@ -238,7 +236,12 @@ function Home() {
           </div>
         </form>
       </div>
-      <Feed posts={posts} getPosts={getPosts} setPosts={setPosts} />
+      <Feed
+        posts={posts}
+        getPosts={getPosts}
+        setPosts={setPosts}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

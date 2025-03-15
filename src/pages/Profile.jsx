@@ -59,6 +59,7 @@ export default function Profile() {
   const [uploadedCoverImg, setUploadedCoverImg] = useState(null);
   const [nameWordCount, setNameWordCount] = useState(0);
   const [bioWordCount, setBioWordCount] = useState(0);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const editForm = useRef();
 
@@ -89,6 +90,7 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
+    setPageLoading(true);
     axiosInst.get(`/users/${username}`).then((res) => {
       const userData = res.data.data;
       setUser(userData);
@@ -102,7 +104,8 @@ export default function Profile() {
         })
         .then((res) => {
           setPosts(res.data.data);
-        });
+        })
+        .finally(() => setPageLoading(false));
     });
   }, [username]);
 
@@ -200,13 +203,13 @@ export default function Profile() {
     setEditModel({ ...editModel, [e.target.name]: e.target.value });
     switch (e.target.name) {
       case "name":
-        setNameWordCount(e.target.value.length)
+        setNameWordCount(e.target.value.length);
         break;
       case "bio":
         setBioWordCount(e.target.value.length);
         break;
     }
-    setNameWordCount
+    setNameWordCount;
   };
 
   const showModal = () => {
@@ -286,7 +289,20 @@ export default function Profile() {
   return (
     <div>
       <div>
-        {user && (
+        {pageLoading ? (
+          <div className="flex justify-center h-50 overflow-hidden mt-10">
+            <svg
+              className="mr-3 size-5 animate-spin overflow-hidden"
+              viewBox="0 0 24 24"
+            >
+              <path
+                className="opacity-25"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+        ) : (
           <>
             <div
               className="flex items-center gap-4 py-1 pl-3 z-10 sticky-header"
@@ -310,9 +326,9 @@ export default function Profile() {
                 </svg>
               </div>
               <div>
-                <p className="text-xl font-semibold">{user.name}</p>
+                <p className="text-xl font-semibold">{user?.name}</p>
                 <p className="text-slate-500 text-sm">
-                  {user.postCount} {user.postCount === 1 ? "post" : "posts"}
+                  {user?.postCount} {user?.postCount === 1 ? "post" : "posts"}
                 </p>
               </div>
             </div>
@@ -320,7 +336,7 @@ export default function Profile() {
               <img className="cover-bg" src={user?.coverImgUrl} alt="" />
               <img
                 className="profile-img border-4 border-white dark:border-black"
-                src={user.profileImgUrl || profilePlaceholder}
+                src={user?.profileImgUrl || profilePlaceholder}
                 alt=""
               />
             </div>
@@ -349,12 +365,12 @@ export default function Profile() {
               )}
 
               <div className="mb-2">
-                <p className="font-semibold text-xl">{user.name}</p>
+                <p className="font-semibold text-xl">{user?.name}</p>
                 <p className="text-slate-500 text-sm leading-none">
-                  @{user.username}
+                  @{user?.username}
                 </p>
               </div>
-              <p className="my-1">{user.bio}</p>
+              <p className="my-1">{user?.bio}</p>
               <p className="flex items-center text-slate-500 gap-1 my-1 text-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -370,15 +386,15 @@ export default function Profile() {
                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
                   />
                 </svg>
-                Joined {user.createdAt}
+                Joined {user?.createdAt}
               </p>
               <div className="flex gap-4 text-sm mt-3">
                 <p>
-                  <span className="font-semibold">{user.followingCount}</span>{" "}
+                  <span className="font-semibold">{user?.followingCount}</span>{" "}
                   Following
                 </p>
                 <p>
-                  <span className="font-semibold">{user.followerCount}</span>{" "}
+                  <span className="font-semibold">{user?.followerCount}</span>{" "}
                   Followers
                 </p>
               </div>
