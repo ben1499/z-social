@@ -9,6 +9,7 @@ import Post from "./pages/Post";
 import Bookmarks from "./pages/Bookmarks";
 import Profile from "./pages/Profile";
 import AuthSuccess from "./pages/AuthSuccess";
+import Error from "./pages/Error";
 
 const routes = [
   {
@@ -21,7 +22,7 @@ const routes = [
   },
   {
     path: "/",
-    // errorElement: <Error />,
+    errorElement: <Error />,
     element: (
       <ProtectedRoute>
         <Layout />

@@ -45,7 +45,6 @@ function Layout() {
 
   // Post creation state
   const [modalIsOpen, setIsOpen] = useState(false);
-  // const [isPickerVisible, setPickerVisible] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);

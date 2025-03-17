@@ -100,7 +100,7 @@ export default function Profile() {
           setPosts(res.data.data);
         })
         .finally(() => setPageLoading(false));
-    });
+    }).finally(() => setPageLoading(false));
   }, [username]);
 
   const fetchUser = () => {
@@ -303,7 +303,7 @@ export default function Profile() {
               ></path>
             </svg>
           </div>
-        ) : (
+        ) : user ? (
           <>
             <div
               className="flex items-center gap-4 py-1 pl-3 z-10 sticky-header"
@@ -437,7 +437,7 @@ export default function Profile() {
               )}
             </div>
           </>
-        )}
+        ) : <div className="text-center mt-10">Sorry this user doesn{"'"}t exist</div>}
       </div>
       <Modal
         isOpen={modalIsOpen}

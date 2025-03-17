@@ -37,7 +37,7 @@
   --color: #fff;
   --btn-bg: #fff;
   --btn-color: #000;
-  --btn-bg-hover:rgb(215, 219, 220);
+  --btn-bg-hover: rgb(215, 219, 220);
   --list-item-hover-bg: rgb(24, 24, 24);
   --border-color: rgb(47, 51, 54);
   --bg-hover: rgb(255, 255, 255, 0.06);
@@ -472,7 +472,6 @@ textarea {
   .ReactModal__Content.ReactModal__Content--after-open {
     width: 100vw !important;
   }
-
 
   .center-section {
     order: 1;

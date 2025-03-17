@@ -178,7 +178,6 @@ export default function Post() {
 
   const removeImage = () => {
     const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
-    console.log(image_id);
     axiosInst
       .delete("/images/", {
         params: {
