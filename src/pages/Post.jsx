@@ -6,6 +6,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useOutletContext } from "react-router-dom";
 import SinglePost from "../components/SinglePost";
 import useComponentVisible from "../hooks/useComponentVisible";
+import useStickyHeader from "../hooks/useStickyHeader";
 
 export default function Post() {
   const { id } = useParams();
@@ -13,7 +14,6 @@ export default function Post() {
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef(null);
-  const stickyRef = useRef(null);
 
   const [post, setPost] = useState(null);
 
@@ -22,39 +22,16 @@ export default function Post() {
   const [imageProgress, setImageProgress] = useState(0);
   const [uploadImage, setUploadImage] = useState(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
-  const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
-    useComponentVisible(false);
-
   const [isLoading, setLoading] = useState(false);
 
   const [wordCount, setWordCount] = useState(0);
 
   const [createLoading, setCreateLoading] = useState(false);
 
-  // For sticky header backdrop style
-  useEffect(() => {
-    // timeout to wait for the element to be mounted
-    const timeoutId = setTimeout(() => {
-      const el = stickyRef.current;
-      if (el) {
-        // Check if the ref is attached to an element
-        const observer = new IntersectionObserver(
-          ([e]) =>
-            e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
-          { threshold: [1] }
-        );
-        observer.observe(el);
-
-        // Cleanup: Important to avoid memory leaks
-        return () => {
-          observer.unobserve(el);
-          clearTimeout(timeoutId);
-        };
-      }
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, []);
+  const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
+    useComponentVisible(false);
+  
+  const { stickyRef } = useStickyHeader();
 
   useEffect(() => {
     setLoading(true);
@@ -240,7 +217,7 @@ export default function Post() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <div
         className="flex items-center gap-4 border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] pl-3 py-3 sticky-header"
         ref={stickyRef}

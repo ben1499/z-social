@@ -3,12 +3,15 @@ import Feed from "../components/Feed";
 import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
 import useWatchEffect from "../hooks/useWatchEffect";
+import useStickyHeader from "../hooks/useStickyHeader";
 
 export default function Bookmarks() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [query, setQuery] = useState("");
   const [isLoading, setLoading] = useState(false);
+
+  const { stickyRef } = useStickyHeader();
 
   const fetchPosts = (query = "") => {
     setLoading(true);
@@ -50,8 +53,8 @@ export default function Bookmarks() {
   };
 
   return (
-    <div>
-      <div className="mb-3 mx-2">
+    <div className="min-h-screen">
+      <div ref={stickyRef} className="mb-3 mx-2 py-1 sticky-header">
         <div className="flex items-center gap-4 my-3">
           <div className="hover:bg-slate-300 dark:hover:bg-gray-800 rounded-full p-1">
             <svg

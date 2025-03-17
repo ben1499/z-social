@@ -5,6 +5,7 @@ import Feed from "../components/Feed";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import Modal from "react-modal";
 import { useSnackbar } from "react-simple-snackbar";
+import useStickyHeader from "../hooks/useStickyHeader";
 
 const customStyles = {
   content: {
@@ -52,7 +53,6 @@ const tabs = [
 export default function Profile() {
   const { username } = useParams();
   const navigate = useNavigate();
-  const stickyRef = useRef(null);
   const location = useLocation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -80,31 +80,8 @@ export default function Profile() {
   const createNameError = createErrors?.find((error) => error.path === "name");
 
   const [openSnackbar] = useSnackbar(options);
-  
 
-  useEffect(() => {
-    // timeout to wait for the element to be mounted
-    const timeoutId = setTimeout(() => {
-      const el = stickyRef.current;
-      if (el) {
-        // Check if the ref is attached to an element
-        const observer = new IntersectionObserver(
-          ([e]) =>
-            e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
-          { threshold: [1] }
-        );
-        observer.observe(el);
-
-        // Cleanup: Important to avoid memory leaks
-        return () => {
-          observer.unobserve(el);
-          clearTimeout(timeoutId);
-        };
-      }
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, []);
+  const { stickyRef } = useStickyHeader();
 
   useEffect(() => {
     setPageLoading(true);
@@ -236,6 +213,8 @@ export default function Profile() {
       profileImgUrl: user.profileImgUrl,
       coverImgUrl: user.coverImgUrl,
     });
+    setNameWordCount(user.name.length);
+    setBioWordCount(user.bio?.length ?? 0);
     setIsOpen(true);
   };
 
@@ -309,7 +288,7 @@ export default function Profile() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <div>
         {pageLoading ? (
           <div className="flex justify-center h-50 overflow-hidden mt-10">

@@ -441,3 +441,70 @@ textarea {
   color: var(--color) !important;
   background-color: var(--bg) !important;
 }
+
+@media (max-width: 1024px) {
+  .sidebar-list > li span {
+    display: none;
+  }
+
+  .sidebar {
+    margin-left: 50px;
+    padding-right: 30px;
+  }
+
+  .center-section {
+    width: 65%;
+  }
+
+  .ReactModal__Content.ReactModal__Content--after-open {
+    width: 70vw !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    margin-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ReactModal__Content.ReactModal__Content--after-open {
+    width: 100vw !important;
+  }
+
+
+  .center-section {
+    order: 1;
+    width: auto;
+  }
+
+  .sidebar {
+    height: fit-content;
+    order: 2;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    background-color: var(--bg);
+    border-top: 1px solid var(--border-color);
+    padding: 10px 8px;
+    z-index: 3;
+    overflow: hidden;
+    width: auto;
+    margin: 0;
+  }
+
+  .sidebar-list {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0px;
+  }
+
+  .sidebar-list > li {
+    padding: 5px 5px;
+  }
+
+  .sidebar-list svg {
+    font-size: 90px;
+  }
+}

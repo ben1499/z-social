@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import { useNavigate, useLocation } from "react-router-dom";
+import useStickyHeader from "../hooks/useStickyHeader";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setLoading] = useState(false);
+
+  const { stickyRef } = useStickyHeader();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,11 +36,38 @@ export default function Notifications() {
     }
   };
 
+  const goBack = () => {
+    if (location.state === null) {
+      navigate("/home");
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
-    <div>
-      <p className="font-bold text-xl border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] p-2">
-        Notifications
-      </p>
+    <div className="min-h-[95vh]">
+      <div ref={stickyRef} className="flex items-center gap-2 px-3 my-1 border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] sticky-header p-2">
+        <div className="hover:bg-slate-300 dark:hover:bg-gray-800 rounded-full p-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-5"
+            onClick={goBack}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+            />
+          </svg>
+        </div>
+        <p className="font-bold text-xl">
+          Notifications
+        </p>
+      </div>
       <div>
         {isLoading ? (
           <div className="flex justify-center h-50 overflow-hidden mt-4">
@@ -56,7 +86,7 @@ export default function Notifications() {
           notifications.map((notification) => (
             <div
               key={notification.id}
-              className="flex gap-3 notification-item cursor-pointer border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3"
+              className="flex gap-3 w-[100%] notification-item cursor-pointer border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3"
               onClick={(e) => goToPost(e, notification)}
             >
               {notification.type === "LIKE" ? (

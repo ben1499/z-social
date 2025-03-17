@@ -166,14 +166,14 @@ function Login() {
   const loginOtherError = loginErrors?.find((error) => !error.path);
 
   return (
-    <div className="h-screen flex justify-center items-center gap-44">
+    <div className="min-h-screen flex justify-center items-center gap-44 max-sm:flex-col max-sm:w-full max-sm:gap-12">
       <div>
-        <h1 className="font-[XCompany] text-[27rem]">Z</h1>
+        <h1 className="font-[XCompany] text-[27vw]">Z</h1>
       </div>
-      <div>
-        <h1 className="mb-8 text-7xl font-semibold">Happening now</h1>
-        <h3 className="text-3xl mb-9 font-medium">Join today.</h3>
-        <div className="w-3/5">
+      <div className="max-sm:mb-6">
+        <h1 className="mb-8 text-7xl font-semibold max-sm:text-3xl max-sm:text-center">Happening now</h1>
+        <h3 className="text-3xl mb-9 font-medium max-sm:text-center">Join today.</h3>
+        <div className="w-3/5 max-sm:w-full">
           <form ref={loginForm} method="post" onSubmit={submitLoginForm}>
             <div>
               <label htmlFor="">Email</label>

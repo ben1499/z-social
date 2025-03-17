@@ -4,12 +4,15 @@ import personPlaceholder from "../assets/person-placeholder.jpeg";
 import Feed from "../components/Feed";
 import useWatchEffect from "../hooks/useWatchEffect";
 import { useNavigate, useLocation } from "react-router-dom";
+import useStickyHeader from "../hooks/useStickyHeader";
 
 export default function Explore() {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+
+  const { stickyRef } = useStickyHeader();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -98,8 +101,8 @@ export default function Explore() {
   };
 
   return (
-    <div className="mt-2">
-      <div className="mx-3 relative">
+    <div className="mt-2 min-h-screen">
+      <div ref={stickyRef} className="mx-3 relative py-2 sticky-header">
         <input
           type="text"
           className="pl-10 border border-slate-300 dark:border-[rgb(51,54,57)] rounded-full w-full px-2 py-1 focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"

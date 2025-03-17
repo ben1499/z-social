@@ -191,7 +191,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
   return (
     <div className="feed">
       {isLoading ? (
-        <div className="flex justify-center h-50 overflow-hidden mt-2">
+        <div className="flex justify-center h-50 overflow-hidden mt-2 min-h-screen">
           <svg
             className="mr-3 size-5 animate-spin overflow-hidden"
             viewBox="0 0 24 24"

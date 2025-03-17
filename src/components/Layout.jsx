@@ -265,10 +265,10 @@ function Layout() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex max-sm:flex-col">
       <div className="sidebar absolute">
         <div>
-          <p className="text-4xl ml-6 mt-2 font-bold">ℤ</p>
+          <p className="text-4xl ml-5 mt-2 font-bold max-sm:hidden">ℤ</p>
           <ul className="sidebar-list">
             <li>
               <Link to="/home" className="!w-full">
@@ -321,7 +321,7 @@ function Layout() {
                     d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
                   />
                 </svg>
-                Explore
+                <span>Explore</span>
               </Link>
             </li>
             <li>
@@ -357,7 +357,7 @@ function Layout() {
                     </p>
                   ) : null}
                 </div>
-                Notifications
+                <span>Notifications</span>
               </Link>
             </li>
             <li>
@@ -382,7 +382,7 @@ function Layout() {
                     d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
                   />
                 </svg>
-                Bookmarks
+                <span>Bookmarks</span>
               </Link>
             </li>
             <li>
@@ -407,7 +407,7 @@ function Layout() {
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
-                Profile
+                <span>Profile</span>
               </Link>
             </li>
             <li onClick={handleSignOut}>
@@ -425,10 +425,26 @@ function Layout() {
                   d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
                 />
               </svg>
-              Sign Out
+              <span>Sign Out</span>
             </li>
-            <button className="!rounded-full w-full mt-4" onClick={openModal}>
+            <button className="!rounded-full w-full mt-4 max-lg:hidden" onClick={openModal}>
               Post
+            </button>
+            <button className="!rounded-full !p-2 lg:hidden max-lg:ml-3 max-lg:mt-4 max-sm:hidden" onClick={openModal}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
             </button>
           </ul>
           {user && isComponentVisible && (
@@ -438,7 +454,7 @@ function Layout() {
             >
               {isDarkMode ? (
                 <li
-                  className="hover:bg-slate-100 hover:dark:bg-gray-700 py-3 px-4 cursor-pointer flex gap-3"
+                  className="hover:bg-slate-100 hover:dark:bg-gray-700 py-3 px-4 cursor-pointer flex gap-3 max-lg:text-sm w-56"
                   onClick={toggleTheme}
                 >
                   <svg
@@ -483,7 +499,7 @@ function Layout() {
           )}
         </div>
         {user ? (
-          <div className="flex items-center justify-between relative mt-auto mb-6 hover:bg-[rgb(15,20,25,0.1)] hover:dark:bg-gray-900 rounded-full py-3 px-2 w-[120%] transition-colors">
+          <div className="flex items-center max-lg:flex-col justify-between relative mt-auto max-sm:mt-0 mb-6 max-sm:hidden hover:bg-[rgb(15,20,25,0.1)] hover:dark:bg-gray-900 rounded-full py-3 px-2 w-[120%] transition-colors">
             <div className="flex gap-2">
               <Link to={`/${user.username}`} state={{ from: location }}>
                 <img
@@ -492,7 +508,7 @@ function Layout() {
                   alt=""
                 />
               </Link>
-              <div>
+              <div className="max-lg:hidden">
                 <Link
                   to={`/${user.username}`}
                   state={{ from: location }}
@@ -529,7 +545,7 @@ function Layout() {
       <div className="w-2/6 center-section">
         <Outlet context={{ user, triggerPostsFetch }} />
       </div>
-      <div className="right-bar">
+      <div className="right-bar max-lg:hidden">
         <UserSearch />
         <div className="pt-4 pb-2 mt-6 rounded-xl suggestion-box">
           <p className="font-bold mb-5 text-xl px-3">You might like</p>
@@ -548,7 +564,9 @@ function Layout() {
                   />
                   <div>
                     <p className="hover:underline font-medium">{user.name}</p>
-                    <p className="text-slate-600 dark:text-gray-500 text-sm">@{user.username}</p>
+                    <p className="text-slate-600 dark:text-gray-500 text-sm">
+                      @{user.username}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -648,7 +666,10 @@ function Layout() {
                 onChange={handleImageUpload}
               />
               {isPickerVisible ? (
-                <div ref={pickerDropRef} style={{ position: "absolute", top: 25 }}>
+                <div
+                  ref={pickerDropRef}
+                  style={{ position: "absolute", top: 25 }}
+                >
                   <EmojiPicker
                     theme={isDarkMode ? "dark" : "light"}
                     onEmojiClick={handleEmojiClick}
