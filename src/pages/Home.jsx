@@ -128,6 +128,8 @@ function Home() {
 
   const createPost = (e) => {
     e.preventDefault();
+    if (!contentInput && !uploadImage) 
+      return;
     setCreateLoading(true);
     axiosInst
       .post("/posts", {
@@ -163,7 +165,6 @@ function Home() {
             <div className="grow-wrap" data-replicated-value={contentInput}>
               <textarea
                 type="text"
-                required
                 className="content-input"
                 value={contentInput}
                 onInput={handleContentInputChange}
