@@ -1,7 +1,7 @@
 # Z Social
 
 <p align="center">
-  <img src="https://res.cloudinary.com/dfubtb083/image/upload/v1742264912/z-social/k8tuivfes1t8cppm8axb.png" alt="X-clone screenshot" width="800"/>
+  <img src="https://res.cloudinary.com/dfubtb083/image/upload/v1742264912/z-social/k8tuivfes1t8cppm8axb.png" alt="Z Social screenshot" width="800"/>
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite Badge"/>
