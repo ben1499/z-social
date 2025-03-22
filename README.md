@@ -16,7 +16,7 @@ A Twitter-like social media application built with modern React technologies, en
 
 ## 🔗 Links
 
-- **Live Demo:** []()
+- **Live Demo:** [https://z-social-ben1499.netlify.app](https://z-social-ben1499.netlify.app)
 - **Backend Repository:** [https://github.com/ben1499/z-social-backend](https://github.com/ben1499/z-social-backend)
 
 ## 🌟 Features
