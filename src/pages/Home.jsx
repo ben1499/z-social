@@ -175,7 +175,7 @@ function Home() {
           </div>
           {uploadImage && (
             <div className="mx-6 h-30 relative">
-              <button className="post-img-remove" onClick={removeImage}>
+              <button type="button" className="post-img-remove" onClick={removeImage}>
                 X
               </button>
               <img src={uploadImage} alt="" className="post-img" />

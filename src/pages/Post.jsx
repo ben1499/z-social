@@ -335,7 +335,7 @@ export default function Post() {
                     {isComponentVisible ? (
                       <div
                         ref={dropRef}
-                        className="w-32 cursor-pointer flex border border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] gap-2 pl-2 pr-4 py-1 rounded-lg"
+                        className="w-32 cursor-pointer flex border bg-white dark:bg-black border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] gap-2 pl-2 pr-4 py-1 rounded-lg"
                         style={{ position: "absolute", left: -100 }}
                         onClick={() => deletePost(post)}
                       >

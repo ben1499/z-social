@@ -85,22 +85,25 @@ export default function Profile() {
 
   useEffect(() => {
     setPageLoading(true);
-    axiosInst.get(`/users/${username}`).then((res) => {
-      const userData = res.data.data;
-      setUser(userData);
+    axiosInst
+      .get(`/users/${username}`)
+      .then((res) => {
+        const userData = res.data.data;
+        setUser(userData);
 
-      axiosInst
-        .get("/posts", {
-          params: {
-            is_explore: false,
-            user_id: userData.id,
-          },
-        })
-        .then((res) => {
-          setPosts(res.data.data);
-        })
-        .finally(() => setPageLoading(false));
-    }).finally(() => setPageLoading(false));
+        axiosInst
+          .get("/posts", {
+            params: {
+              is_explore: false,
+              user_id: userData.id,
+            },
+          })
+          .then((res) => {
+            setPosts(res.data.data);
+          })
+          .finally(() => setPageLoading(false));
+      })
+      .finally(() => setPageLoading(false));
   }, [username]);
 
   const fetchUser = () => {
@@ -361,15 +364,22 @@ export default function Profile() {
                   className="!rounded-full !px-4 !py-1 absolute top-[-55px] right-[12px]"
                   onClick={toggleFollow}
                 >
-                  Follow
+                  {user?.followsYou ? "Follow back" : "Follow"}
                 </button>
               )}
 
               <div className="mb-2">
                 <p className="font-semibold text-xl">{user?.name}</p>
-                <p className="text-slate-500 text-sm leading-none">
-                  @{user?.username}
-                </p>
+                <div className="flex items-center gap-1">
+                  <p className="text-slate-500 text-sm leading-none">
+                    @{user?.username}
+                  </p>
+                  {user?.followsYou && (
+                    <p className="text-xs px-[3px] bg-gray-200 text-gray-600 dark:bg-gray-800 dark:text-gray-400 rounded-sm">
+                      Follows you
+                    </p>
+                  )}
+                </div>
               </div>
               <p className="my-1">{user?.bio}</p>
               <p className="flex items-center text-slate-500 gap-1 my-1 text-sm">
@@ -437,7 +447,11 @@ export default function Profile() {
               )}
             </div>
           </>
-        ) : <div className="text-center mt-10">Sorry this user doesn{"'"}t exist</div>}
+        ) : (
+          <div className="text-center mt-10">
+            Sorry this user doesn{"'"}t exist
+          </div>
+        )}
       </div>
       <Modal
         isOpen={modalIsOpen}
@@ -499,6 +513,7 @@ export default function Profile() {
                 <div className="inline-block border-4 border-white dark:border-black rounded-full">
                   {uploadedProfileImg && (
                     <button
+                      type="button"
                       id="profile-img"
                       className="post-img-remove z-10"
                       onClick={removeImage}

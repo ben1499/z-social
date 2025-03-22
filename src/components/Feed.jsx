@@ -277,7 +277,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                       ) : null}
                       {post.keyId === dropdownVisibleId ? (
                         <div
-                          className="w-32 cursor-pointer flex border-slate-200 dark:border-gray-600 rounded-lg border gap-2 pl-2 pr-4 py-1 ignore"
+                          className="w-32 cursor-pointer flex bg-white dark:bg-black border-slate-200 dark:border-gray-600 rounded-lg border gap-2 pl-2 pr-4 py-1 ignore"
                           style={{ position: "absolute", left: -100 }}
                           onClick={() => deletePost(post)}
                         >
