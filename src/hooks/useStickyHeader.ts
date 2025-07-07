@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 
 export default function useStickyHeader() {
-    const stickyRef = useRef(null);
+    const stickyRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
       // timeout to wait for the element to be mounted
@@ -15,7 +15,7 @@ export default function useStickyHeader() {
             { threshold: [1] }
           );
           observer.observe(el);
-    
+
           // Cleanup: Important to avoid memory leaks
           return () => {
             observer.unobserve(el);
@@ -23,10 +23,9 @@ export default function useStickyHeader() {
           };
         }
       }, 100);
-    
+
       return () => clearTimeout(timeoutId);
     }, []);
 
     return { stickyRef };
 }
-

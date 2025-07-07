@@ -25,14 +25,14 @@ const url = import.meta.env.VITE_API_URL;
 
 function Login() {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [createErrors, setCreateErrors] = useState(null);
-  const [loginErrors, setLoginErrors] = useState(null);
+  const [createErrors, setCreateErrors] = useState<any[] | null>(null);
+  const [loginErrors, setLoginErrors] = useState<any[] | null>(null);
   const [isLoading, setLoading] = useState(false);
 
   const { isDarkMode } = useContext(ThemeContext);
 
-  const createForm = useRef();
-  const loginForm = useRef();
+  const createForm = useRef<HTMLFormElement>(null);
+  const loginForm = useRef<HTMLFormElement>(null);
 
   const navigate = useNavigate();
 
@@ -61,37 +61,39 @@ function Login() {
     setIsOpen(false);
   };
 
-  const handleLoginModelChange = (e) => {
-    switch (e.target.name) {
+  const handleLoginModelChange = (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    switch (target.name) {
       case "email":
-        setLoginModel({ ...loginModel, email: e.target.value });
+        setLoginModel({ ...loginModel, email: target.value });
         break;
       case "password":
-        setLoginModel({ ...loginModel, password: e.target.value });
+        setLoginModel({ ...loginModel, password: target.value });
         break;
     }
   };
 
-  const handleCreateModelChange = (e) => {
-    switch (e.target.name) {
+  const handleCreateModelChange = (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    switch (target.name) {
       case "username":
-        setCreateModel({ ...createModel, username: e.target.value });
+        setCreateModel({ ...createModel, username: target.value });
         break;
       case "name":
-        setCreateModel({ ...createModel, name: e.target.value });
+        setCreateModel({ ...createModel, name: target.value });
         break;
       case "email":
-        setCreateModel({ ...createModel, email: e.target.value });
+        setCreateModel({ ...createModel, email: target.value });
         break;
       case "password":
-        setCreateModel({ ...createModel, password: e.target.value });
+        setCreateModel({ ...createModel, password: target.value });
         break;
     }
   };
 
-  const submitCreateForm = (e) => {
+  const submitCreateForm = (e: React.MouseEvent) => {
     e.preventDefault();
-    const isValid = createForm.current.reportValidity();
+    const isValid = createForm.current?.reportValidity();
     if (isValid) {
       setLoading(true);
       axios
@@ -120,10 +122,10 @@ function Login() {
     (error) => error.path === "password"
   );
 
-  const submitLoginForm = useCallback((e) => {
+  const submitLoginForm = useCallback((e: React.FormEvent | null = null) => {
     if (e)
       e.preventDefault();
-    const isValid = loginForm.current.reportValidity();
+    const isValid = loginForm.current?.reportValidity();
     if (isValid) {
       setLoading(true);
       axios
@@ -150,8 +152,8 @@ function Login() {
 
   useEffect(() => {
     if (triggerDemoLogin) {
-      submitLoginForm(); 
-      setTriggerDemoLogin(false); 
+      submitLoginForm();
+      setTriggerDemoLogin(false);
     }
   }, [triggerDemoLogin, submitLoginForm]);
 

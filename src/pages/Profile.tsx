@@ -6,6 +6,7 @@ import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import Modal from "react-modal";
 import { useSnackbar } from "react-simple-snackbar";
 import useStickyHeader from "../hooks/useStickyHeader";
+import { User } from "../types/User";
 
 const customStyles = {
   content: {
@@ -50,32 +51,45 @@ const tabs = [
   },
 ];
 
+interface PostImage {
+  id: number;
+  postImg: string;
+  imgUrl: string;
+}
+
 export default function Profile() {
   const { username } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [selectedTab, setSelectedTab] = useState(1);
   const [posts, setPosts] = useState([]);
-  const [postImages, setPostImages] = useState([]);
-  const [createErrors, setCreateErrors] = useState(null);
+  const [postImages, setPostImages] = useState<PostImage[]>([]);
+  const [createErrors, setCreateErrors] = useState<any[] | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [isSaveLoading, setSaveLoading] = useState(false);
-  const [editModel, setEditModel] = useState({
+  const [editModel, setEditModel] = useState<{
+    name: string;
+    bio: string;
+    profileImgUrl: string | null;
+    coverImgUrl: string | null;
+  }>({
     name: "",
     bio: "",
     profileImgUrl: null,
     coverImgUrl: null,
   });
-  const [uploadedProfileImg, setUploadedProfileImg] = useState(null);
-  const [uploadedCoverImg, setUploadedCoverImg] = useState(null);
+  const [uploadedProfileImg, setUploadedProfileImg] = useState<string | null>(
+    null,
+  );
+  const [uploadedCoverImg, setUploadedCoverImg] = useState<string | null>(null);
   const [nameWordCount, setNameWordCount] = useState(0);
   const [bioWordCount, setBioWordCount] = useState(0);
   const [pageLoading, setPageLoading] = useState(false);
 
-  const editForm = useRef();
+  const editForm = useRef<HTMLFormElement | null>(null);
 
   const createNameError = createErrors?.find((error) => error.path === "name");
 
@@ -128,7 +142,7 @@ export default function Profile() {
     }
   };
 
-  const handleTabChange = (id) => {
+  const handleTabChange = (id: number) => {
     if (id === selectedTab) return;
     setSelectedTab(id);
     switch (id) {
@@ -136,12 +150,12 @@ export default function Profile() {
         fetchPosts();
         break;
       case 2:
-        axiosInst.get(`/posts/liked-by/${user.id}`).then((res) => {
+        axiosInst.get(`/posts/liked-by/${user?.id}`).then((res) => {
           setPosts(res.data.data);
         });
         break;
       case 3:
-        axiosInst.get(`/users/${user.id}/media`).then((res) => {
+        axiosInst.get(`/users/${user?.id}/media`).then((res) => {
           setPostImages(res.data.data);
         });
         break;
@@ -156,7 +170,7 @@ export default function Profile() {
     }
   };
 
-  const goToPost = (id) => {
+  const goToPost = (id: number) => {
     return () => {
       navigate(`/post/${id}`, { state: { from: location } });
     };
@@ -167,9 +181,9 @@ export default function Profile() {
     setIsOpen(false);
   };
 
-  const submitForm = (e) => {
+  const submitForm = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const isValid = editForm.current.reportValidity();
+    const isValid = editForm?.current?.reportValidity();
     if (isValid) {
       setSaveLoading(true);
       const payload = {
@@ -196,33 +210,42 @@ export default function Profile() {
     }
   };
 
-  const handleEditModelChange = (e) => {
-    setEditModel({ ...editModel, [e.target.name]: e.target.value });
-    switch (e.target.name) {
+  const handleEditModelChange = (
+    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setEditModel({
+      ...editModel,
+      [e.currentTarget.name]: e.currentTarget.value,
+    });
+    switch (e.currentTarget.name) {
       case "name":
-        setNameWordCount(e.target.value.length);
+        setNameWordCount(e.currentTarget.value.length);
         break;
       case "bio":
-        setBioWordCount(e.target.value.length);
+        setBioWordCount(e.currentTarget.value.length);
         break;
     }
     setNameWordCount;
   };
 
   const showModal = () => {
-    setEditModel({
-      name: user.name,
-      bio: user.bio ?? "",
-      profileImgUrl: user.profileImgUrl,
-      coverImgUrl: user.coverImgUrl,
-    });
-    setNameWordCount(user.name.length);
-    setBioWordCount(user.bio?.length ?? 0);
-    setIsOpen(true);
+    if (user) {
+      setEditModel({
+        name: user.name,
+        bio: user.bio ?? "",
+        profileImgUrl: user.profileImgUrl || null,
+        coverImgUrl: user.coverImgUrl || null,
+      });
+      setNameWordCount(user.name.length);
+      setBioWordCount(user.bio?.length ?? 0);
+      setIsOpen(true);
+    }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files) return;
+    const file = files[0];
     if (!file) return;
     if (file.size > 1000000) {
       openSnackbar("File size must be less than 1 MB", 2500);
@@ -234,7 +257,7 @@ export default function Profile() {
     axiosInst
       .post("/images", formData)
       .then((res) => {
-        if (e.target.id === "profile-img") {
+        if (e.currentTarget.id === "profile-img") {
           setUploadedProfileImg(res.data.url);
         } else {
           setUploadedCoverImg(res.data.url);
@@ -248,12 +271,14 @@ export default function Profile() {
       });
   };
 
-  const removeImage = (e) => {
+  const removeImage = (
+    e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
+  ) => {
     const id = e.currentTarget.id;
     const image_id =
       id === "profile-img"
-        ? uploadedProfileImg.match(/z-social\/[a-zA-Z0-9]+/g)
-        : uploadedCoverImg.match(/z-social\/[a-zA-Z0-9]+/g);
+        ? uploadedProfileImg?.match(/z-social\/[a-zA-Z0-9]+/g)
+        : uploadedCoverImg?.match(/z-social\/[a-zA-Z0-9]+/g);
     axiosInst
       .delete("/images/", {
         params: {
@@ -273,7 +298,7 @@ export default function Profile() {
   };
 
   const toggleFollow = () => {
-    if (user.isFollowing) {
+    if (user?.isFollowing) {
       axiosInst
         .delete(`/users/follow/${user.id}`)
         .then(() => {
@@ -282,7 +307,7 @@ export default function Profile() {
         .catch((err) => console.log(err));
     } else {
       axiosInst
-        .post(`/users/follow/${user.id}`)
+        .post(`/users/follow/${user?.id}`)
         .then(() => {
           fetchUser();
         })
@@ -505,7 +530,7 @@ export default function Profile() {
           <div className="relative">
             <img
               className="cover-bg"
-              src={uploadedCoverImg || editModel?.coverImgUrl}
+              src={uploadedCoverImg || editModel?.coverImgUrl || undefined}
               alt=""
             />
             <div className="absolute bottom-[-50px] left-2">
@@ -649,7 +674,6 @@ export default function Profile() {
               id="bio"
               className="w-full block rounded-sm"
               placeholder=""
-              type="email"
               name="bio"
               value={editModel.bio}
               maxLength={100}

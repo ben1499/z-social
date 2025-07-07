@@ -3,6 +3,23 @@ import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import { useNavigate, useLocation } from "react-router-dom";
 import useStickyHeader from "../hooks/useStickyHeader";
+import { Post } from "../types/Post";
+import { User } from "../types/User";
+
+enum NotificationType {
+  LIKE = "LIKE",
+  REPOST = "REPOST",
+  FOLLOW = "FOLLOW"
+}
+
+interface Notification {
+  id: number;
+  postId: number;
+  content: string;
+  type: NotificationType;
+  post: Post;
+  sender: User;
+}
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -27,8 +44,9 @@ export default function Notifications() {
       .finally(() => setLoading(false));
   }, []);
 
-  const goToPost = (e, notification) => {
-    if (e.target.classList.contains("ignore") && notification.sender) {
+  const goToPost = (e: React.MouseEvent, notification: Notification) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains("ignore") && notification.sender) {
       return navigate(`/${notification.sender.username}`);
     }
     if (notification.postId) {
@@ -83,7 +101,7 @@ export default function Notifications() {
             </svg>
           </div>
         ) : notifications.length ? (
-          notifications.map((notification) => (
+          notifications.map((notification: Notification) => (
             <div
               key={notification.id}
               className="flex gap-3 w-[100%] notification-item cursor-pointer border-b border-[rgb(185,202,211)] dark:border-[rgb(47,51,54)] px-2 py-3"

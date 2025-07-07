@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 
-export default function useWatchEffect(callback, dependencies) {
+export default function useWatchEffect(callback: () => void, dependencies: any[]) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {

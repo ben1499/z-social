@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
-import PropTypes from "prop-types";
+import { PropsWithChildren } from "react";
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children }: PropsWithChildren<{}>) {
 
   if (!localStorage.getItem("token")) {
     return <Navigate to="/login" state={{ isRedirect: true }} />
@@ -9,9 +9,5 @@ function ProtectedRoute({ children }) {
 
   return children;
 }
-
-ProtectedRoute.propTypes = {
-  children: PropTypes.node
-};
 
 export default ProtectedRoute;

@@ -1,38 +1,49 @@
 import { useState } from "react";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
-import {
-  useOutletContext,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
-import PropTypes from "prop-types";
+import { Post } from "../types/Post";
+import { User } from "../types/User";
 
-export default function Feed({ posts, getPosts, setPosts, isLoading }) {
-  const { user } = useOutletContext();
+interface FeedProps {
+  posts: Post[];
+  getPosts?: () => void;
+  setPosts: Function;
+  isLoading?: boolean;
+}
+
+export default function Feed({
+  posts,
+  getPosts,
+  setPosts,
+  isLoading,
+}: FeedProps) {
+  const { user }: { user: User } = useOutletContext();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [dropdownVisibleId, setDropdownVisibleId] = useState(null);
+  const [dropdownVisibleId, setDropdownVisibleId] = useState<string | null>(null);
 
-  const showDropdown = (postId) => {
+  const showDropdown = (postId: string) => {
     if (postId === dropdownVisibleId) setDropdownVisibleId(null);
     else setDropdownVisibleId(postId);
   };
 
-  const deletePost = (post) => {
+  const deletePost = (post: Post) => {
     axiosInst
       .delete(`/posts/${post.id}`)
       .then(() => {
-        getPosts();
+        if (getPosts) {
+          getPosts();
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const toggleLike = (post) => {
+  const toggleLike = (post: Post) => {
     if (post.isLiked) {
       axiosInst
         .delete(`/posts/${post.id}/like`)
@@ -80,7 +91,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
     }
   };
 
-  const toggleBookmark = (post) => {
+  const toggleBookmark = (post: Post) => {
     if (post.isBookmarked) {
       axiosInst
         .delete(`/posts/${post.id}/bookmark`)
@@ -128,7 +139,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
     }
   };
 
-  const toggleRepost = (post) => {
+  const toggleRepost = (post: Post) => {
     if (post.isRepostedByUser) {
       axiosInst
         .delete(`/posts/${post.id}/repost`)
@@ -176,13 +187,13 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
     }
   };
 
-  const goToPost = (e, post) => {
-    if (e.target.classList.contains("profile-link")) 
+  const goToPost = (e: React.MouseEvent, post: Post) => {
+    if (e.currentTarget.classList.contains("profile-link"))
       return navigate(`/${post.user.username}`, { state: { from: location } });
     if (
-      e.target.nodeName === "svg" ||
-      e.target.nodeName === "path" ||
-      e.target.classList.contains("ignore")
+      e.currentTarget.nodeName === "svg" ||
+      e.currentTarget.nodeName === "path" ||
+      e.currentTarget.classList.contains("ignore")
     )
       return;
     return navigate(`/post/${post.id}`, { state: { from: location } });
@@ -226,7 +237,8 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                     d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3"
                   />
                 </svg>
-                {post.repostUser.id === user?.id ? "You" : post.repostUser.name} reposted
+                {post.repostUser.id === user?.id ? "You" : post.repostUser.name}{" "}
+                reposted
               </p>
             ) : null}
             <div className="flex gap-2">
@@ -253,7 +265,7 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
                         ·{" "}
                         {getRelativeTime(
                           post.createdAt,
-                          post.createdAtFormatted
+                          post.createdAtFormatted,
                         )}
                       </span>
                     </div>
@@ -393,11 +405,4 @@ export default function Feed({ posts, getPosts, setPosts, isLoading }) {
       )}
     </div>
   );
-}
-
-Feed.propTypes = {
-  posts: PropTypes.array,
-  getPosts: PropTypes.func,
-  setPosts: PropTypes.func,
-  isLoading: PropTypes.bool
 }

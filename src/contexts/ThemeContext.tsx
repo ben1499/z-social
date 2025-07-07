@@ -1,12 +1,11 @@
-import { createContext, useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import { createContext, useState, useEffect, PropsWithChildren } from "react";
 
 const ThemeContext = createContext({
   isDarkMode: false,
   toggleTheme: () => {},
 });
 
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: PropsWithChildren<{}>) => {
   const getInitialTheme = () => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -56,7 +55,3 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export default ThemeContext;
-
-ThemeProvider.propTypes = {
-  children: PropTypes.node,
-};

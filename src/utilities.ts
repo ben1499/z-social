@@ -1,7 +1,7 @@
-export function getRelativeTime(value, formattedValue) {
+export function getRelativeTime(value: string, formattedValue: string): string {
   const now = new Date();
   const date = new Date(value);
-  const seconds = Math.floor((now - date) / 1000);
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
   if (seconds < 3600) {

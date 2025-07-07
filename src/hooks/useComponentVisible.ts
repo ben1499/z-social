@@ -1,16 +1,18 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, LegacyRef } from "react";
 
-export default function useComponentVisible() {
+export default function useComponentVisible<T extends HTMLElement | SVGSVGElement, D extends HTMLDivElement | HTMLUListElement | undefined>() {
   const [isComponentVisible, setComponentVisible] = useState(false);
-  const dropRef = useRef(null);
-  const triggerRef = useRef(null);
+  const dropRef = useRef<D>(null);
+  const triggerRef = useRef<T>(null);
 
-  const handleClickOutside = useCallback((event) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+
     if (
       dropRef.current &&
-      !dropRef.current.contains(event.target) &&
+      !dropRef.current.contains(target) &&
       triggerRef.current &&
-      !triggerRef.current.contains(event.target)
+      !triggerRef.current.contains(target)
     ) {
       setComponentVisible(false);
     }

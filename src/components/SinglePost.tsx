@@ -2,34 +2,43 @@ import { useLocation, useNavigate } from "react-router-dom";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import axiosInst from "../config/axios";
 import { getRelativeTime } from "../utilities";
-import PropTypes from "prop-types";
 import useComponentVisible from "../hooks/useComponentVisible";
+import { AxiosError } from "axios";
+import { Post } from "../types/Post";
 
-export default function SinglePost({ post, user, fetchPost }) {
+interface SinglePostProps {
+  post: Post;
+  user: { id: number };
+  fetchPost: () => void;
+}
+
+export default function SinglePost({ post, user, fetchPost }: SinglePostProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
-    useComponentVisible();
+    useComponentVisible<SVGSVGElement, HTMLDivElement>();
 
-  const goToPost = (e, id) => {
+  const goToPost = (e: React.MouseEvent<HTMLElement>, id: number) => {
+    const target = e.target as HTMLElement;
+
     if (
-      e.target.nodeName === "svg" ||
-      e.target.nodeName === "path" ||
-      e.target.classList.contains("ignore")
+      target.nodeName === "svg" ||
+      target.nodeName === "path" ||
+      target.classList.contains("ignore")
     )
       return;
     navigate(`/post/${id}`, { state: { from: location } });
   };
 
-  const toggleLike = (post) => {
+  const toggleLike = (post: Post) => {
     if (post.isLiked) {
       axiosInst
         .delete(`/posts/${post.id}/like`)
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     } else {
@@ -38,20 +47,20 @@ export default function SinglePost({ post, user, fetchPost }) {
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     }
   };
 
-  const toggleBookmark = (post) => {
+  const toggleBookmark = (post: Post) => {
     if (post.isBookmarked) {
       axiosInst
         .delete(`/posts/${post.id}/bookmark`)
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     } else {
@@ -60,20 +69,20 @@ export default function SinglePost({ post, user, fetchPost }) {
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     }
   };
 
-  const toggleRepost = (post) => {
+  const toggleRepost = (post: Post) => {
     if (post.isRepostedByUser) {
       axiosInst
         .delete(`/posts/${post.id}/repost`)
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     } else {
@@ -82,19 +91,19 @@ export default function SinglePost({ post, user, fetchPost }) {
         .then(() => {
           fetchPost();
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
         });
     }
   };
 
-  const deletePost = (post) => {
+  const deletePost = (post: Post) => {
     axiosInst
       .delete(`/posts/${post.id}`)
       .then(() => {
         fetchPost();
       })
-      .catch((err) => {
+      .catch((err: AxiosError) => {
         console.log(err);
       });
   };
@@ -278,9 +287,3 @@ export default function SinglePost({ post, user, fetchPost }) {
     </div>
   );
 }
-
-SinglePost.propTypes = {
-  post: PropTypes.object,
-  user: PropTypes.object,
-  fetchPost: PropTypes.func,
-};

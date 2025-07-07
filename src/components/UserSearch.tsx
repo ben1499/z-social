@@ -5,6 +5,7 @@ import useWatchEffect from "../hooks/useWatchEffect";
 import { useNavigate } from "react-router-dom";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import { useLocation } from "react-router-dom";
+import { User } from "../types/User";
 
 export default function UserSearch() {
   const [searchInput, setSearchInput] = useState("");
@@ -14,7 +15,7 @@ export default function UserSearch() {
   const location = useLocation();
 
   const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
-    useComponentVisible();
+    useComponentVisible<HTMLInputElement, HTMLDivElement>();
 
   useWatchEffect(() => {
     const timer = setTimeout(() => {
@@ -33,11 +34,11 @@ export default function UserSearch() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const handleSearch = (e) => {
-    setSearchInput(e.target.value);
+  const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    setSearchInput(e.currentTarget.value);
   };
 
-  const goToProfile = (user) => {
+  const goToProfile = (user: User) => {
     setComponentVisible(false);
     setSearchInput("");
     navigate(`/${user.username}`, { state: { from: location } });
@@ -81,7 +82,7 @@ export default function UserSearch() {
           {searchInput ? (
             <div>
               {users.length ? (
-                users.map((user) => (
+                users.map((user: User) => (
                   <div
                     className="cursor-pointer px-3 py-2 hover:bg-[rgb(0,0,0,0.03)]"
                     key={user.id}

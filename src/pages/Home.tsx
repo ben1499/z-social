@@ -2,12 +2,13 @@ import { useEffect, useState, useContext } from "react";
 import Feed from "../components/Feed";
 import axiosInst from "../config/axios";
 import { useOutletContext } from "react-router-dom";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useWatchEffect from "../hooks/useWatchEffect";
 import useComponentVisible from "../hooks/useComponentVisible";
 import ThemeContext from "../contexts/ThemeContext";
 import { useSnackbar } from "react-simple-snackbar";
+import { User } from "../types/User";
 
 const url = import.meta.env.VITE_API_URL;
 
@@ -26,12 +27,15 @@ const options = {
 
 function Home() {
   const [posts, setPosts] = useState([]);
-  const { user, triggerPostsFetch } = useOutletContext();
+  const {
+    user,
+    triggerPostsFetch,
+  }: { user: User; triggerPostsFetch: () => void } = useOutletContext();
   const [contentInput, setContentInput] = useState("");
 
   const [uploadLoading, setUploadLoading] = useState(false);
   const [imageProgress, setImageProgress] = useState(0);
-  const [uploadImage, setUploadImage] = useState(null);
+  const [uploadImage, setUploadImage] = useState<string | null>(null);
 
   const [wordCount, setWordCount] = useState(0);
 
@@ -47,7 +51,7 @@ function Home() {
     dropRef,
     isComponentVisible: isPickerVisible,
     setComponentVisible: setPickerVisible,
-  } = useComponentVisible();
+  } = useComponentVisible<SVGSVGElement, HTMLDivElement>();
 
   const getPosts = () => {
     setLoading(true);
@@ -72,18 +76,19 @@ function Home() {
     getPosts();
   }, [triggerPostsFetch]);
 
-  const handleContentInputChange = (e) => {
-    setContentInput(e.target.value);
-    setWordCount(e.target.value.length);
+  const handleContentInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    setContentInput(e.currentTarget.value);
+    setWordCount(e.currentTarget.value.length);
   };
 
-  const handleEmojiClick = (value) => {
+  const handleEmojiClick = (value: { emoji: string }) => {
     setContentInput(contentInput + value.emoji);
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files) return;
+    const file = files[0];
     if (file.size > 1000000) {
       openSnackbar("File size must be less than 1 MB", 2500);
       return;
@@ -111,7 +116,7 @@ function Home() {
   };
 
   const removeImage = () => {
-    const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
+    const image_id = uploadImage?.match(/z-social\/[a-zA-Z0-9]+/g);
     axiosInst
       .delete("/images/", {
         params: {
@@ -126,10 +131,9 @@ function Home() {
       });
   };
 
-  const createPost = (e) => {
+  const createPost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!contentInput && !uploadImage) 
-      return;
+    if (!contentInput && !uploadImage) return;
     setCreateLoading(true);
     axiosInst
       .post("/posts", {
@@ -164,7 +168,6 @@ function Home() {
             />
             <div className="grow-wrap" data-replicated-value={contentInput}>
               <textarea
-                type="text"
                 className="content-input"
                 value={contentInput}
                 onInput={handleContentInputChange}
@@ -175,7 +178,11 @@ function Home() {
           </div>
           {uploadImage && (
             <div className="mx-6 h-30 relative">
-              <button type="button" className="post-img-remove" onClick={removeImage}>
+              <button
+                type="button"
+                className="post-img-remove"
+                onClick={removeImage}
+              >
                 X
               </button>
               <img src={uploadImage} alt="" className="post-img" />
@@ -220,7 +227,7 @@ function Home() {
                   style={{ position: "absolute", top: 25, zIndex: 5 }}
                 >
                   <EmojiPicker
-                    theme={isDarkMode ? "dark" : "light"}
+                    theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
                     onEmojiClick={handleEmojiClick}
                   />
                 </div>

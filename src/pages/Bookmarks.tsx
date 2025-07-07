@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Feed from "../components/Feed";
 import { useEffect, useState } from "react";
 import axiosInst from "../config/axios";
@@ -10,6 +10,8 @@ export default function Bookmarks() {
   const [posts, setPosts] = useState([]);
   const [query, setQuery] = useState("");
   const [isLoading, setLoading] = useState(false);
+
+  const location = useLocation();
 
   const { stickyRef } = useStickyHeader();
 
@@ -48,8 +50,8 @@ export default function Bookmarks() {
     }
   };
 
-  const handleInput = (e) => {
-    setQuery(e.target.value);
+  const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+    setQuery(e.currentTarget.value);
   };
 
   return (

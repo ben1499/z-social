@@ -5,9 +5,10 @@ import Feed from "../components/Feed";
 import useWatchEffect from "../hooks/useWatchEffect";
 import { useNavigate, useLocation } from "react-router-dom";
 import useStickyHeader from "../hooks/useStickyHeader";
+import { User } from "../types/User";
 
 export default function Explore() {
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [posts, setPosts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -34,7 +35,7 @@ export default function Explore() {
       }),
     ])
       .then(([res1, res2]) => {
-        setSuggestedUsers(res1.data.data.filter((user) => !user.isFollowing));
+        setSuggestedUsers(res1.data.data.filter((user: User) => !user.isFollowing));
         setPosts(res2.data.data);
       })
       .catch((err) => console.log(err))
@@ -53,7 +54,7 @@ export default function Explore() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  const toggleFollow = (user) => {
+  const toggleFollow = (user: User) => {
     if (user.isFollowing) {
       axiosInst
         .delete(`/users/follow/${user.id}`)
@@ -91,12 +92,12 @@ export default function Explore() {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchInput(e.target.value);
+  const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    setSearchInput(e.currentTarget.value);
   };
 
-  const goToProfile = (user, e) => {
-    if (e.target.classList.contains("ignore")) return;
+  const goToProfile = (user: User, e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.currentTarget.classList.contains("ignore")) return;
     navigate(`/${user.username}`, { state: { from: location } });
   };
 

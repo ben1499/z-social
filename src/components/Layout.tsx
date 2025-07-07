@@ -4,10 +4,11 @@ import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useComponentVisible from "../hooks/useComponentVisible";
 import Modal from "react-modal";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import UserSearch from "./UserSearch";
 import { useSnackbar } from "react-simple-snackbar";
 import ThemeContext from "../contexts/ThemeContext";
+import { User } from "../types/User";
 
 const customStyles = {
   content: {
@@ -39,8 +40,8 @@ const options = {
 };
 
 function Layout() {
-  const [user, setUser] = useState(null);
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
   // Post creation state
@@ -49,24 +50,24 @@ function Layout() {
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [imageProgress, setImageProgress] = useState(0);
-  const [uploadImage, setUploadImage] = useState(null);
+  const [uploadImage, setUploadImage] = useState<string | null>(null);
   const [wordCount, setWordCount] = useState(0);
   const [triggerPostsFetch, setTriggerPostsFetch] = useState(0);
 
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 
   const { triggerRef, dropRef, isComponentVisible, setComponentVisible } =
-    useComponentVisible();
+    useComponentVisible<SVGSVGElement, HTMLUListElement>();
 
   const {
     triggerRef: pickerTriggerRef,
     dropRef: pickerDropRef,
     isComponentVisible: isPickerVisible,
     setComponentVisible: setPickerVisible,
-  } = useComponentVisible();
+  } = useComponentVisible<SVGSVGElement, HTMLDivElement>();
 
   const [openSnackbar] = useSnackbar(options);
-  const openSnackbarRef = useRef();
+  const openSnackbarRef = useRef<typeof openSnackbar>();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -90,7 +91,7 @@ function Layout() {
           localStorage.removeItem("user_id");
           openSnackbarRef.current(
             "Something went wrong. Please try again.",
-            2500
+            2500,
           );
           return navigate("/login");
         }
@@ -122,17 +123,18 @@ function Layout() {
       .catch((err) => console.log(err));
   }, [navigate]);
 
-  const handleContentInputChange = (e) => {
-    setContentInput(e.target.value);
-    setWordCount(e.target.value.length);
+  const handleContentInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    setContentInput(e.currentTarget.value);
+    setWordCount(e.currentTarget.value.length);
   };
 
-  const handleEmojiClick = (value) => {
+  const handleEmojiClick = (value: { emoji: string }) => {
     setContentInput(contentInput + value.emoji);
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    const file = files?.length ? files[0] : null;
     if (!file) return;
     if (file.size > 1000000) {
       openSnackbar("File size must be less than 1 MB", 2500);
@@ -161,7 +163,7 @@ function Layout() {
   };
 
   const removeImage = () => {
-    const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
+    const image_id = uploadImage?.match(/z-social\/[a-zA-Z0-9]+/g);
     axiosInst
       .delete("/images/", {
         params: {
@@ -191,10 +193,9 @@ function Layout() {
     setIsOpen(true);
   };
 
-  const createPost = (e) => {
+  const createPost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!contentInput && !uploadImage) 
-      return;
+    if (!contentInput && !uploadImage) return;
     setCreateLoading(true);
     axiosInst
       .post("/posts", {
@@ -216,7 +217,7 @@ function Layout() {
       });
   };
 
-  const toggleFollow = (user) => {
+  const toggleFollow = (user: User) => {
     if (user.isFollowing) {
       axiosInst
         .delete(`/users/follow/${user.id}`)
@@ -260,8 +261,8 @@ function Layout() {
     navigate("/login");
   };
 
-  const goToProfile = (user, e) => {
-    if (e.target.classList.contains("ignore")) return;
+  const goToProfile = (user: User, e: React.MouseEvent) => {
+    if (e.currentTarget.classList.contains("ignore")) return;
     navigate(`/${user.username}`, { state: { from: location } });
   };
 
@@ -428,10 +429,16 @@ function Layout() {
               </svg>
               <span>Sign Out</span>
             </li>
-            <button className="!rounded-full w-full mt-4 max-lg:hidden" onClick={openModal}>
+            <button
+              className="!rounded-full w-full mt-4 max-lg:hidden"
+              onClick={openModal}
+            >
               Post
             </button>
-            <button className="!rounded-full !p-2 lg:hidden max-lg:ml-3 max-lg:mt-4 max-sm:hidden" onClick={openModal}>
+            <button
+              className="!rounded-full !p-2 lg:hidden max-lg:ml-3 max-lg:mt-4 max-sm:hidden"
+              onClick={openModal}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -551,7 +558,7 @@ function Layout() {
         <div className="pt-4 pb-2 mt-6 rounded-xl suggestion-box">
           <p className="font-bold mb-5 text-xl px-3">You might like</p>
           <div>
-            {suggestedUsers.map((user) => (
+            {suggestedUsers.map((user: User) => (
               <div
                 className="flex justify-between items-center cursor-pointer px-3 py-2 hover:bg-[rgb(0,0,0,0.03)] dark:hover:bg-[rgb(255,255,255,0.08)]"
                 key={user.id}
@@ -615,7 +622,6 @@ function Layout() {
             />
             <div className="grow-wrap" data-replicated-value={contentInput}>
               <textarea
-                type="text"
                 className="content-input"
                 value={contentInput}
                 onInput={handleContentInputChange}
@@ -626,7 +632,11 @@ function Layout() {
           </div>
           {uploadImage && (
             <div className="mx-6 h-30 relative">
-              <button type="button" className="post-img-remove" onClick={removeImage}>
+              <button
+                type="button"
+                className="post-img-remove"
+                onClick={removeImage}
+              >
                 X
               </button>
               <img src={uploadImage} alt="" className="post-img" />
@@ -671,7 +681,7 @@ function Layout() {
                   style={{ position: "absolute", top: 25 }}
                 >
                   <EmojiPicker
-                    theme={isDarkMode ? "dark" : "light"}
+                    theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
                     onEmojiClick={handleEmojiClick}
                   />
                 </div>

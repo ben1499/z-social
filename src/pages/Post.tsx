@@ -7,20 +7,22 @@ import { useOutletContext } from "react-router-dom";
 import SinglePost from "../components/SinglePost";
 import useComponentVisible from "../hooks/useComponentVisible";
 import useStickyHeader from "../hooks/useStickyHeader";
+import { User } from "../types/User";
+import type { Post } from "../types/Post";
 
 export default function Post() {
   const { id } = useParams();
-  const { user } = useOutletContext();
+  const { user }: { user: User } = useOutletContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<Post | null>(null);
 
   const [contentInput, setContentInput] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [imageProgress, setImageProgress] = useState(0);
-  const [uploadImage, setUploadImage] = useState(null);
+  const [uploadImage, setUploadImage] = useState<string | null>(null);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
@@ -29,8 +31,8 @@ export default function Post() {
   const [createLoading, setCreateLoading] = useState(false);
 
   const { dropRef, triggerRef, isComponentVisible, setComponentVisible } =
-    useComponentVisible(false);
-  
+    useComponentVisible<SVGSVGElement, HTMLDivElement>();
+
   const { stickyRef } = useStickyHeader();
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export default function Post() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const toggleLike = (post) => {
+  const toggleLike = (post: Post) => {
     if (post.isLiked) {
       axiosInst
         .delete(`/posts/${post.id}/like`)
@@ -66,7 +68,7 @@ export default function Post() {
     }
   };
 
-  const toggleBookmark = (post) => {
+  const toggleBookmark = (post: Post) => {
     if (post.isBookmarked) {
       axiosInst
         .delete(`/posts/${post.id}/bookmark`)
@@ -88,7 +90,7 @@ export default function Post() {
     }
   };
 
-  const toggleRepost = (post) => {
+  const toggleRepost = (post: Post) => {
     if (post.isRepostedByUser) {
       axiosInst
         .delete(`/posts/${post.id}/repost`)
@@ -119,13 +121,13 @@ export default function Post() {
       .catch((err) => console.log(err));
   };
 
-  const createReply = (e) => {
+  const createReply = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCreateLoading(true);
     axiosInst
       .post("/posts", {
         content: contentInput,
-        parentPostId: post.id,
+        parentPostId: post?.id,
         imgUrl: uploadImage,
       })
       .then(() => {
@@ -143,17 +145,19 @@ export default function Post() {
       });
   };
 
-  const handleContentInputChange = (e) => {
-    setContentInput(e.target.value);
-    setWordCount(e.target.value.length);
+  const handleContentInputChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    setContentInput(e.currentTarget.value);
+    setWordCount(e.currentTarget.value.length);
   };
 
-  const handleEmojiClick = (value) => {
+  const handleEmojiClick = (value: { emoji: string }) => {
     setContentInput(contentInput + value.emoji);
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files) return;
+    const file = files[0];
     const formData = new FormData();
     formData.append("image", file);
     setUploadLoading(true);
@@ -177,7 +181,7 @@ export default function Post() {
   };
 
   const removeImage = () => {
-    const image_id = uploadImage.match(/z-social\/[a-zA-Z0-9]+/g);
+    const image_id = uploadImage?.match(/z-social\/[a-zA-Z0-9]+/g);
     axiosInst
       .delete("/images/", {
         params: {
@@ -201,10 +205,11 @@ export default function Post() {
   };
 
   const handleReplyIconClick = () => {
-    inputRef.current.focus();
+    if (inputRef.current)
+      inputRef.current.focus();
   };
 
-  const deletePost = (post) => {
+  const deletePost = (post: Post) => {
     axiosInst
       .delete(`/posts/${post.id}`)
       .then(() => {
@@ -458,7 +463,6 @@ export default function Post() {
                 <div className="grow-wrap" data-replicated-value={contentInput}>
                   <textarea
                     ref={inputRef}
-                    type="text"
                     required
                     className="content-input"
                     value={contentInput}
