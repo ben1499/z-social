@@ -1,14 +1,16 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState, useRef, useContext, lazy, Suspense } from "react";
 import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import axiosInst from "../config/axios";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useComponentVisible from "../hooks/useComponentVisible";
 import Modal from "react-modal";
-import EmojiPicker, { Theme } from "emoji-picker-react";
+import { Theme } from "emoji-picker-react";
 import UserSearch from "./UserSearch";
 import { useSnackbar } from "react-simple-snackbar";
 import ThemeContext from "../contexts/ThemeContext";
 import { User } from "../types/User";
+
+const EmojiPicker = lazy(() => import("emoji-picker-react"));
 
 const customStyles = {
   content: {
@@ -680,10 +682,12 @@ function Layout() {
                   ref={pickerDropRef}
                   style={{ position: "absolute", top: 25 }}
                 >
-                  <EmojiPicker
-                    theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
-                    onEmojiClick={handleEmojiClick}
-                  />
+                  <Suspense>
+                    <EmojiPicker
+                      theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
+                      onEmojiClick={handleEmojiClick}
+                    />
+                  </Suspense>
                 </div>
               ) : null}
               <svg

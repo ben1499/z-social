@@ -1,14 +1,15 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, lazy, Suspense } from "react";
 import Feed from "../components/Feed";
 import axiosInst from "../config/axios";
 import { useOutletContext } from "react-router-dom";
-import EmojiPicker, { Theme } from "emoji-picker-react";
+import { Theme } from "emoji-picker-react";
 import personPlaceholder from "../assets/person-placeholder.jpeg";
 import useWatchEffect from "../hooks/useWatchEffect";
 import useComponentVisible from "../hooks/useComponentVisible";
 import ThemeContext from "../contexts/ThemeContext";
 import { useSnackbar } from "react-simple-snackbar";
 import { User } from "../types/User";
+const EmojiPicker = lazy(() => import("emoji-picker-react"));
 
 const url = import.meta.env.VITE_API_URL;
 
@@ -226,10 +227,12 @@ function Home() {
                   ref={dropRef}
                   style={{ position: "absolute", top: 25, zIndex: 5 }}
                 >
-                  <EmojiPicker
-                    theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
-                    onEmojiClick={handleEmojiClick}
-                  />
+                  <Suspense>
+                    <EmojiPicker
+                      theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
+                      onEmojiClick={handleEmojiClick}
+                    />
+                  </Suspense>
                 </div>
               ) : null}
               <svg
