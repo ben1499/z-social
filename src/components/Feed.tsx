@@ -25,12 +25,14 @@ export default function Feed({
 
   const [dropdownVisibleId, setDropdownVisibleId] = useState<string | null>(null);
 
-  const showDropdown = (postId: string) => {
+  const showDropdown = (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (postId === dropdownVisibleId) setDropdownVisibleId(null);
     else setDropdownVisibleId(postId);
   };
 
-  const deletePost = (post: Post) => {
+  const deletePost = (post: Post, e: React.MouseEvent) => {
+    e.stopPropagation();
     axiosInst
       .delete(`/posts/${post.id}`)
       .then(() => {
@@ -269,7 +271,7 @@ export default function Feed({
                         )}
                       </span>
                     </div>
-                    <div className="relative">
+                    <div className="relative ignore">
                       {post.userId === user?.id ? (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -278,7 +280,7 @@ export default function Feed({
                           strokeWidth={1.5}
                           stroke="currentColor"
                           className="size-6 rounded-full hover:bg-slate-200 dark:hover:bg-gray-800"
-                          onClick={() => showDropdown(post.keyId)}
+                          onClick={(e) => showDropdown(post.keyId, e)}
                         >
                           <path
                             strokeLinecap="round"
@@ -291,7 +293,7 @@ export default function Feed({
                         <div
                           className="w-32 cursor-pointer flex bg-white dark:bg-black border-slate-200 dark:border-gray-600 rounded-lg border gap-2 pl-2 pr-4 py-1 ignore"
                           style={{ position: "absolute", left: -100 }}
-                          onClick={() => deletePost(post)}
+                          onClick={(e) => deletePost(post, e)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
