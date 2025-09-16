@@ -156,7 +156,10 @@ export default function Explore() {
                 </div>
                 <button
                   className="!rounded-full !px-4 !py-1 ignore"
-                  onClick={() => toggleFollow(user)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFollow(user);
+                  }}
                 >
                   {user.isFollowing ? "Following" : "Follow"}
                 </button>

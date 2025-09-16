@@ -349,7 +349,10 @@ export default function Feed({
                       strokeWidth={1.5}
                       stroke={post.isRepostedByUser ? "#00BA7C" : "gray"}
                       className="size-5"
-                      onClick={() => toggleRepost(post)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleRepost(post);
+                      }}
                     >
                       <path
                         strokeLinecap="round"
@@ -367,7 +370,10 @@ export default function Feed({
                       strokeWidth={1.5}
                       stroke="gray"
                       className="size-5"
-                      onClick={() => toggleLike(post)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleLike(post);
+                      }}
                     >
                       <path
                         strokeLinecap="round"
@@ -385,7 +391,10 @@ export default function Feed({
                       strokeWidth={1.5}
                       stroke="gray"
                       className="size-5"
-                      onClick={() => toggleBookmark(post)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleBookmark(post)
+                      }}
                     >
                       <path
                         strokeLinecap="round"

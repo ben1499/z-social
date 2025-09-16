@@ -1,14 +1,16 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import axiosInst from "../config/axios";
 import profilePlaceholder from "../assets/person-placeholder.jpeg";
 import EmojiPicker from "emoji-picker-react";
+import { Theme } from "emoji-picker-react";
 import { useOutletContext } from "react-router-dom";
 import SinglePost from "../components/SinglePost";
 import useComponentVisible from "../hooks/useComponentVisible";
 import useStickyHeader from "../hooks/useStickyHeader";
 import { User } from "../types/User";
 import type { Post } from "../types/Post";
+import ThemeContext from "../contexts/ThemeContext";
 
 export default function Post() {
   const { id } = useParams();
@@ -34,6 +36,8 @@ export default function Post() {
     useComponentVisible<SVGSVGElement, HTMLDivElement>();
 
   const { stickyRef } = useStickyHeader();
+
+  const { isDarkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     setLoading(true);
@@ -516,6 +520,7 @@ export default function Post() {
                   {isPickerVisible ? (
                     <EmojiPicker
                       style={{ position: "absolute", top: 25 }}
+                      theme={isDarkMode ? Theme.DARK : Theme.LIGHT}
                       onEmojiClick={handleEmojiClick}
                     />
                   ) : null}
